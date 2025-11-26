@@ -11,21 +11,18 @@ services:
       --skip-name-resolve
     restart: always
 
-    env_file:
-      - .env.local
-
     ports:
-      - "${DB_PORT}:3306"   # .env.local 기준 DB_PORT=3307
+      - "3307:3306"
 
     environment:
-      MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
-      MYSQL_DATABASE: "${DB_NAME}"
+      MYSQL_ROOT_PASSWORD: "1234"
+      MYSQL_DATABASE: "bank_channel"
 
     volumes:
       - channel-db-data:/var/lib/mysql
 
     healthcheck:
-      test: [ "CMD-SHELL", "mysqladmin ping -uroot -p${DB_PASSWORD} | grep 'mysqld is alive'" ]
+      test: [ "CMD-SHELL", "mysqladmin ping -uroot -p1234 | grep 'mysqld is alive'" ]
       interval: 5s
       timeout: 5s
       retries: 10
