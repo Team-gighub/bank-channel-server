@@ -6,6 +6,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "contract_data")
 @Getter
@@ -39,7 +41,7 @@ public class ContractData extends BaseEntity {
     private Long businessSectorYears;
 
     @Column(name = "annual_total_income", length = 255)
-    private String annualTotalIncome;
+    private BigDecimal annualTotalIncome;
 
     @Lob
     @Column(name = "contract_url")
