@@ -40,7 +40,4 @@ public class BaasEndUser extends BaseEntity {
     @Column(name = "passcode", length = 200)
     private String passcode;
 
-    @OneToMany(mappedBy = "endUser", cascade = CascadeType.ALL)
-    private List<BaasUserAccount> userAccounts = new ArrayList<>();
-
 }
