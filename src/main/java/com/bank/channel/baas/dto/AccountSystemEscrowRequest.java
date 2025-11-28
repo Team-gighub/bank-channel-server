@@ -12,7 +12,6 @@ import lombok.Getter;
 public class AccountSystemEscrowRequest {
 
     private String amount; // 결제 금액
-    private String orderNo; // 고객사 주문번호 (워켓의 경우 거래 PK)
     private PayerInfo payerInfo; // 구매자 (워켓의 경우 의뢰인) 정보
     private PayeeInfo payeeInfo; // 판매자 (워켓의 경우 프리랜서) 정보
 

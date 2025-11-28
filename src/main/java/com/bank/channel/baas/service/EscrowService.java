@@ -78,7 +78,6 @@ public class EscrowService {
         // 3. 메인 DTO 빌드 및 반환
         return AccountSystemEscrowRequest.builder()
                 .amount(channelRequest.getAmount())
-                .orderNo(channelRequest.getOrderNo())
                 .payerInfo(payerInfo)
                 .payeeInfo(payeeInfo)
                 .build();
