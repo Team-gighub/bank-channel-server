@@ -1,10 +1,9 @@
 package com.bank.channel.baas.controller;
 
-import com.bank.channel.baas.dto.EscrowRequest;
-import com.bank.channel.baas.dto.EscrowRequestResponse;
+import com.bank.channel.baas.dto.NonBank.PaymentRequest;
+import com.bank.channel.baas.dto.NonBank.PaymentRequestResponse;
 import com.bank.channel.baas.service.EscrowService;
 import com.bank.channel.global.response.ApiResponse;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,11 +22,11 @@ public class EscrowController {
      * [결제 요청] API 엔드포인트: 외부 시스템의 요청을 처리합니다.
      */
     @PostMapping("/request")
-    public ApiResponse<EscrowRequestResponse> requestEscrow(
+    public ApiResponse<PaymentRequestResponse> requestEscrow(
             @RequestHeader(name = "Authorization", required = false) String authorizationHeader,
-            @RequestBody EscrowRequest request
+            @RequestBody PaymentRequest request
     ) {
-        EscrowRequestResponse response = escrowService.requestEscrow(request);
+        PaymentRequestResponse response = escrowService.requestEscrow(request);
         return ApiResponse.success(response);
     }
 
