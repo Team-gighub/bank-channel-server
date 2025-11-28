@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 /**
- * [결제 요청] API (/api/v1/escrow/request) 응답 DTO
+ * [결제 요청] API (/api/v1/payment/request) 응답 DTO
  */
 @Builder
 @Getter

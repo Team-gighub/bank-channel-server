@@ -24,7 +24,7 @@ public class EscrowService {
      * 결제 요청 로직: 외부 요청을 받아 DTO를 가공하여 계정계로 전달
      */
     public EscrowRequestResponse requestEscrow(String authorizationHeader, EscrowRequest request) {
-        log.info("[ESCROW_REQUEST] Start processing request. OrderNo: {}", request.getOrderNo());
+        log.info("[PAYMENT_REQUEST] Start processing request. OrderNo: {}", request.getOrderNo());
 
         // 1. 외부 요청 DTO를 계정계 전용 DTO로 변환/가공
         AccountSystemEscrowRequest accountRequest = convertToAccountSystemRequest(request);
@@ -36,13 +36,13 @@ public class EscrowService {
                     accountRequest
             );
 
-            log.info("[ESCROW_REQUEST] Successfully received response from core system. ConfirmToken: {}",
+            log.info("[PAYMENT_REQUEST] Successfully received response from core system. ConfirmToken: {}",
                     response.getConfirmToken());
             return response;
 
         } catch (FeignException e) {
             // 3. Feign 통신 오류 및 계정계 응답 오류 처리
-            log.error("[ESCROW_REQUEST] Feign error occurred during core system call. Status: {}, Message: {}",
+            log.error("[PAYMENT_REQUEST] Feign error occurred during core system call. Status: {}, Message: {}",
                     e.status(), e.contentUTF8(), e);
 
             // TODO: 계정계 오류 코드를 외부 시스템에 적합한 형태로 변환하여 던지는 로직 필요
@@ -50,7 +50,7 @@ public class EscrowService {
 
         } catch (Exception e) {
             // 4. 그 외 예상치 못한 예외 처리
-            log.error("[ESCROW_REQUEST] Unexpected error during request processing.", e);
+            log.error("[PAYMENT_REQUEST] Unexpected error during request processing.", e);
             throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }

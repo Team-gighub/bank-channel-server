@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.RequestHeader;
 public interface AccountSystemClient {
 
     /**
-     * POST /api/v1/escrow/request
+     * POST /api/v1/payment/request
      * 결제 요청을 계정계로 전달
      *
      * @param authorizationHeader API Key
      * @param request 계정계 전용 요청 DTO (가공된 데이터)
      * @return 결제 요청 응답 DTO (orderNo, confirmToken)
      */
-    @PostMapping("/api/v1/escrow/request")
+    @PostMapping("/api/v1/payment/request")
     EscrowRequestResponse requestEscrow(
             // API 명세의 헤더 파라미터(Authorization)를 계정계로 포워딩
             @RequestHeader(name = "Authorization", required = false) String authorizationHeader,

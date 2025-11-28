@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/escrow")
+@RequestMapping("/api/v1/payment")
 public class EscrowController {
 
     private final EscrowService escrowService;
 
     /**
-     * POST /api/v1/escrow/request
+     * POST /api/v1/payment/request
      * [결제 요청] API 엔드포인트: 외부 시스템의 요청을 처리합니다.
      */
     @PostMapping("/request")
