@@ -25,9 +25,9 @@ public class EscrowController {
     @PostMapping("/request")
     public ApiResponse<EscrowRequestResponse> requestEscrow(
             @RequestHeader(name = "Authorization", required = false) String authorizationHeader,
-            @Valid @RequestBody EscrowRequest request
+            @RequestBody EscrowRequest request
     ) {
-        EscrowRequestResponse response = escrowService.requestEscrow(authorizationHeader, request);
+        EscrowRequestResponse response = escrowService.requestEscrow(request);
         return ApiResponse.success(response);
     }
 

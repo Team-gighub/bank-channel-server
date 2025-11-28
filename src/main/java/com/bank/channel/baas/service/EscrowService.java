@@ -23,7 +23,7 @@ public class EscrowService {
     /**
      * 결제 요청 로직: 외부 요청을 받아 DTO를 가공하여 계정계로 전달
      */
-    public EscrowRequestResponse requestEscrow(String authorizationHeader, EscrowRequest request) {
+    public EscrowRequestResponse requestEscrow(EscrowRequest request) {
         log.info("[PAYMENT_REQUEST] Start processing request. OrderNo: {}", request.getOrderNo());
 
         // 1. 외부 요청 DTO를 계정계 전용 DTO로 변환/가공
@@ -32,7 +32,6 @@ public class EscrowService {
         try {
             // 2. 계정계 Feign Client 호출 (가공된 DTO 사용)
             EscrowRequestResponse response = accountSystemClient.requestEscrow(
-                    authorizationHeader,
                     accountRequest
             );
 
