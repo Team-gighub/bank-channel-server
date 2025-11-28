@@ -10,7 +10,7 @@ import java.math.BigDecimal;
  */
 @Builder
 @Getter
-public class AccountSystemEscrowRequest {
+public class BankEscrowRequest {
 
     private BigDecimal amount; // 결제 금액
     private PayerInfo payerInfo; // 구매자 (워켓의 경우 의뢰인) 정보

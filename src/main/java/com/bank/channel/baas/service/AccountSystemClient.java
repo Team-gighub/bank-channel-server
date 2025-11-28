@@ -1,6 +1,6 @@
 package com.bank.channel.baas.service;
 
-import com.bank.channel.baas.dto.AccountSystemEscrowRequest;
+import com.bank.channel.baas.dto.BankEscrowRequest;
 import com.bank.channel.baas.dto.EscrowRequestResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +23,6 @@ public interface AccountSystemClient {
     @PostMapping("/payment/authorize")
     EscrowRequestResponse requestEscrow(
             // 가공된 DTO 사용
-            @RequestBody AccountSystemEscrowRequest request
+            @RequestBody BankEscrowRequest request
     );
 }

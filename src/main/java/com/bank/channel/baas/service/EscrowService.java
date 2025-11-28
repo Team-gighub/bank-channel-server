@@ -1,6 +1,6 @@
 package com.bank.channel.baas.service;
 
-import com.bank.channel.baas.dto.AccountSystemEscrowRequest;
+import com.bank.channel.baas.dto.BankEscrowRequest;
 import com.bank.channel.baas.dto.EscrowRequest;
 import com.bank.channel.baas.dto.EscrowRequestResponse;
 import com.bank.channel.global.exception.CustomException;
@@ -27,7 +27,7 @@ public class EscrowService {
         log.info("[PAYMENT_REQUEST] Start processing request. OrderNo: {}", request.getOrderNo());
 
         // 1. 외부 요청 DTO를 계정계 전용 DTO로 변환/가공
-        AccountSystemEscrowRequest accountRequest = convertToAccountSystemRequest(request);
+        BankEscrowRequest accountRequest = convertToAccountSystemRequest(request);
 
         try {
             // 2. 계정계 Feign Client 호출 (가공된 DTO 사용)
@@ -58,24 +58,24 @@ public class EscrowService {
      * 전용 DTO 변환 로직 (가공)
      * - EscrowRequest -> AccountSystemEscrowRequest로 변환하며 불필요한 필드(예: phone)를 제거합니다.
      */
-    private AccountSystemEscrowRequest convertToAccountSystemRequest(EscrowRequest channelRequest) {
+    private BankEscrowRequest convertToAccountSystemRequest(EscrowRequest channelRequest) {
 
         // 1. PayerInfo 변환
-        AccountSystemEscrowRequest.PayerInfo payerInfo = AccountSystemEscrowRequest.PayerInfo.builder()
+        BankEscrowRequest.PayerInfo payerInfo = BankEscrowRequest.PayerInfo.builder()
                 .accountNo(channelRequest.getPayerInfo().getAccountNo())
                 .bankCode(channelRequest.getPayerInfo().getBankCode())
                 .name(channelRequest.getPayerInfo().getName())
                 .build();
 
         // 2. PayeeInfo 변환
-        AccountSystemEscrowRequest.PayeeInfo payeeInfo = AccountSystemEscrowRequest.PayeeInfo.builder()
+        BankEscrowRequest.PayeeInfo payeeInfo = BankEscrowRequest.PayeeInfo.builder()
                 .accountNo(channelRequest.getPayeeInfo().getAccountNo())
                 .bankCode(channelRequest.getPayeeInfo().getBankCode())
                 .name(channelRequest.getPayeeInfo().getName())
                 .build();
 
         // 3. 메인 DTO 빌드 및 반환
-        return AccountSystemEscrowRequest.builder()
+        return BankEscrowRequest.builder()
                 .amount(channelRequest.getAmount())
                 .payerInfo(payerInfo)
                 .payeeInfo(payeeInfo)
