@@ -3,6 +3,9 @@ package com.bank.channel.baas.service;
 import com.bank.channel.baas.dto.AccountSystemEscrowRequest;
 import com.bank.channel.baas.dto.EscrowRequest;
 import com.bank.channel.baas.dto.EscrowRequestResponse;
+import com.bank.channel.global.exception.CustomException;
+import com.bank.channel.global.exception.ErrorCode;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,18 +40,18 @@ public class EscrowService {
                     response.getConfirmToken());
             return response;
 
-//        } catch (FeignException e) {
-//            // 3. Feign 통신 오류 및 계정계 응답 오류 처리
-//            log.error("[ESCROW_REQUEST] Feign error occurred during core system call. Status: {}, Message: {}",
-//                    e.status(), e.contentUTF8(), e);
-//
-//            // TODO: 계정계 오류 코드를 외부 시스템에 적합한 형태로 변환하여 던지는 로직 필요
-//            throw new RuntimeException("Failed to request escrow due to core system error: " + e.getMessage(), e);
+        } catch (FeignException e) {
+            // 3. Feign 통신 오류 및 계정계 응답 오류 처리
+            log.error("[ESCROW_REQUEST] Feign error occurred during core system call. Status: {}, Message: {}",
+                    e.status(), e.contentUTF8(), e);
+
+            // TODO: 계정계 오류 코드를 외부 시스템에 적합한 형태로 변환하여 던지는 로직 필요
+            throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
 
         } catch (Exception e) {
             // 4. 그 외 예상치 못한 예외 처리
             log.error("[ESCROW_REQUEST] Unexpected error during request processing.", e);
-            throw new RuntimeException("An unexpected internal error occurred during escrow request.", e);
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
 
