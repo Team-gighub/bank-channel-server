@@ -31,7 +31,7 @@ public class FeignTraceIdInterceptor implements RequestInterceptor {
         // MDC에서 현재 스레드의 traceId 가져오기
         String traceId = MDC.get(MDC_TRACE_ID_KEY);
         
-        if (traceId != null && !traceId.isEmpty()) {
+        if (org.springframework.util.StringUtils.hasText(traceId)) {
             // HTTP 헤더에 traceId 추가
             template.header(TRACE_ID_HEADER, traceId);
             
