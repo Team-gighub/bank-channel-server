@@ -1,7 +1,6 @@
 package com.bank.channel.baas.service;
 
-import com.bank.channel.baas.dto.Bank.BankPaymentApprovalRequest;
-import com.bank.channel.baas.dto.Bank.BankPaymentAuthorizeRequest;
+import com.bank.channel.baas.dto.Bank.*;
 import com.bank.channel.baas.dto.NonBank.PaymentApprovalResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,12 +17,10 @@ public interface AccountSystemClient {
      * POST /payment/authorize
      * 계졍계 결제 요청 API 호출
      *
-     * @param request 계정계 전용 요청 DTO (가공된 데이터)
-     * @return 결제 요청 응답 DTO (orderNo, confirmToken)
+     * @param request 계정계 전용 요청 DTO
      */
     @PostMapping("/payment/authorize")
-    PaymentRequestResponse requestEscrow(
-            // 가공된 DTO 사용
+    void authorizePayment(
             @RequestBody BankPaymentAuthorizeRequest request
     );
 
@@ -31,11 +28,23 @@ public interface AccountSystemClient {
      * POST /payment/approval
      * 계정계 결제 승인 API 호출
      *
-     * @param request
+     * @param request 계정계 전용 요청 DTO
      * @return 결제 승인 응답 DTO (escrowId)
      */
     @PostMapping("/payment/approval")
-    PaymentApprovalResponse approvePayment(
+    BankPaymentApprovalResponse approvePayment(
             @RequestBody BankPaymentApprovalRequest request
+    );
+
+    /**
+     * POST /payment/confirm
+     * 계정계 지급 확정 API 호출
+     *
+     * @param request 계정계 전용 요청 DTO
+     * @return 지급 확정 응답 DTO (paymentId)
+     */
+    @PostMapping("/payment/confirm")
+    BankPaymentConfirmResponse confirmPayment(
+            @RequestBody BankPaymentConfirmRequest request
     );
 }
