@@ -17,3 +17,7 @@ spring:
       ddl-auto: ${DDL_AUTO}
     database-platform: org.hibernate.dialect.MySQLDialect
 
+# 로그 패턴 설정 (MDC의 traceId 포함)
+logging:
+  pattern:
+    console: '%d{yyyy-MM-dd HH:mm:ss} [%X{traceId}] %-5level %logger{36} - %msg%n'
