@@ -55,14 +55,17 @@ public class PaymentService {
      * 요청: escrowId, confirmToken
      * 응답: escrowId
      */
-    public BankPaymentApprovalResponse approvePayment(PaymentApprovalRequest request) {
+    public PaymentApprovalResponse approvePayment(PaymentApprovalRequest request) {
         log.info("[PAYMENT_APPROVAL] Start processing request. EscrowId: {}", request.getEscrowId());
 
         try {
             // 1. 계정계 Feign Client 호출
             BankPaymentApprovalResponse response = accountSystemClient.approvePayment(request);
             log.info("[PAYMENT_APPROVAL] Successfully received response from core system. EscrowId: {}", response.getEscrowId());
-            return response;
+            // 2. 계정계 응답 DTO를 외부 응답 DTO로 변환하여 반환
+            return PaymentApprovalResponse.builder()
+                    .escrowId(response.getEscrowId())
+                    .build();
 
         } catch (FeignException e) {
             log.error("[PAYMENT_APPROVAL] Feign error occurred. Status: {}, Message: {}", e.status(), e.contentUTF8(), e);
@@ -79,14 +82,17 @@ public class PaymentService {
      * 요청: marchantId, reqYmd, escrowId, changerId
      * 응답: paymentId
      */
-    public BankPaymentConfirmResponse confirmPayment(PaymentConfirmRequest request) {
+    public PaymentConfirmResponse confirmPayment(PaymentConfirmRequest request) {
         log.info("[PAYMENT_CONFIRM] Start processing request. EscrowId: {}", request.getEscrowId());
 
         try {
             // 1. 계정계 Feign Client 호출
-            BankPaymentConfirmResponse accountResponse = accountSystemClient.confirmPayment(request);
-            log.info("[PAYMENT_CONFIRM] Successfully received response from core system. PaymentId: {}", accountResponse.getPaymentId());
-            return accountResponse;
+            BankPaymentConfirmResponse response = accountSystemClient.confirmPayment(request);
+            log.info("[PAYMENT_CONFIRM] Successfully received response from core system. PaymentId: {}", response.getPaymentId());
+            // 2. 계정계 응답 DTO를 외부 응답 DTO로 변환하여 반환
+            return PaymentConfirmResponse.builder()
+                    .paymentId(response.getPaymentId())
+                    .build();
 
         } catch (FeignException e) {
             log.error("[PAYMENT_CONFIRM] Feign error occurred. Status: {}, Message: {}", e.status(), e.contentUTF8(), e);
