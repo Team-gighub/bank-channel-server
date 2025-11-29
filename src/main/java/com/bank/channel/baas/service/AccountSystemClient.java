@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * [계정계] 시스템 (Core Server)과의 통신을 위한 Feign Client
  * - 채널계 요청을 계정계로 전달하는 역할을 합니다.
  */
-@FeignClient(name = "account-system", url = "http://")// TODO: 계정계 url로 수정 필요
+@FeignClient(name = "account-system", url = "${external.api.account-system.url}")
 public interface AccountSystemClient {
 
     /**
