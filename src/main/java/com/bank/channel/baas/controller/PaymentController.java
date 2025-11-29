@@ -3,7 +3,6 @@ package com.bank.channel.baas.controller;
 import com.bank.channel.baas.dto.Bank.BankPaymentAuthorizeResponse;
 import com.bank.channel.baas.dto.NonBank.*;
 import com.bank.channel.baas.service.PaymentService;
-import com.bank.channel.global.exception.CustomException;
 import com.bank.channel.global.exception.ErrorCode;
 import com.bank.channel.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -31,47 +30,36 @@ public class PaymentController {
             @RequestHeader(name = "Authorization", required = false) String authorizationHeader,
             @RequestBody PaymentAuthorizeRequest request
     ) {
+        // 1. 서비스 호출: 결제 인증을 수행
+        PaymentAuthorizeResponse result = paymentService.authorizePayment(request);
 
-        String successUrl = request.getSuccessUrl();
-        String failUrl = request.getFailUrl();
+        // 2. 성공/실패에 따라 로직 분기
+        if (result.isSuccess()) {
+            // 2-A. 성공 로직
+            BankPaymentAuthorizeResponse response = result.getResponse();
+            String successUrl = request.getSuccessUrl();
 
-        try {
-            // 1. 서비스 호출: 결제 검증을 수행
-            BankPaymentAuthorizeResponse response = paymentService.authorizePayment(request);
-
-            // 2. 성공 시: successUrl로 escrowId, confirmToken을 쿼리 파라미터로 담아 리다이렉트
             UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(successUrl)
                     .queryParam("escrowId", response.getEscrowId())
                     .queryParam("confirmToken", response.getConfirmToken());
 
-            log.info("[Payment Controller] 결제 인증 성공. Success URL로 리다이렉트: {}", builder.toUriString());
+            log.info("[Payment Authorize Failed] 결제 검증 성공. Success URL로 리다이렉트: {}", builder.toUriString());
             return "redirect:" + builder.toUriString();
 
-        } catch (CustomException e) {
-            // 3. 실패 시 (CustomException 발생): failUrl로 에러 코드와 메시지를 담아 리다이렉트
+        } else {
+            // 2-B. 실패 로직 (CustomException/Exception 처리 로직이 단일화됨)
+            ErrorCode errorCode = result.getErrorCode();
+            String failUrl = request.getFailUrl();
 
-            ErrorCode errorCode = e.getErrorCode();
-            log.error("[Payment Authorize Failed] Code: {}, Message: {}", errorCode.getCode(), errorCode.getMessage());
+            log.error("[Payment Authorize Failed] 결제 검증 실패. Fail URL로 리다이렉트 - Code: {}, Message: {}",
+                    errorCode.getCode(), errorCode.getMessage());
 
             UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(failUrl)
                     .queryParam("code", errorCode.getCode())
                     .queryParam("message", errorCode.getMessage());
+
             return "redirect:" + builder.toUriString();
-
-        } catch (Exception e) {
-            // 4. 예기치 않은 서버 오류: failUrl로 INTERNAL_SERVER_ERROR를 담아 리다이렉트
-
-            ErrorCode internalError = ErrorCode.INTERNAL_SERVER_ERROR;
-            log.error("[Unexpected Server Error]", e);
-
-            UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(failUrl)
-                    .queryParam("code", internalError.getCode())
-                    .queryParam("message", internalError.getMessage());
-            return "redirect:" + builder.toUriString();
-
         }
-
-
     }
 
     /**

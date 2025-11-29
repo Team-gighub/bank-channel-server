@@ -7,13 +7,14 @@ import com.bank.channel.baas.dto.Bank.BankPaymentConfirmResponse;
 import com.bank.channel.baas.dto.NonBank.*;
 import com.bank.channel.global.exception.CustomException;
 import com.bank.channel.global.exception.ErrorCode;
-import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 /**
  * 결제 관련 비즈니스 로직 처리 (계정계 Feign Client 호출 및 채널계 로깅/예외 처리 담당)
@@ -30,7 +31,7 @@ public class PaymentService {
      * 결제 인증 로직
      * 응답: orderNo, confirmToken, escrowId
      */
-    public BankPaymentAuthorizeResponse authorizePayment(PaymentAuthorizeRequest request) {
+    public PaymentAuthorizeResponse authorizePayment(PaymentAuthorizeRequest request) {
         log.info("[PAYMENT_AUTHORIZE] Start processing request. OrderNo: {}", request.getOrderNo());
 
         // 1. 외부 요청 DTO를 계정계 전용 DTO로 변환/가공
@@ -40,18 +41,17 @@ public class PaymentService {
             // 2. 계정계 Feign Client 호출 (가공된 DTO 사용)
             BankPaymentAuthorizeResponse response = accountSystemClient.authorizePayment(accountRequest);
             log.info("[PAYMENT_AUTHORIZE] Successfully received response from core system. ConfirmToken: {}, EscrowId: {}", response.getConfirmToken(), response.getEscrowId());
-            return response;
+            return PaymentAuthorizeResponse.success(response);
         } catch (FeignException e) {
             // 3. Feign 통신 오류 및 계정계 응답 오류 처리
             log.error("[PAYMENT_AUTHORIZE] Feign error occurred during core system call. Status: {}, Message: {}", e.status(), e.contentUTF8(), e);
-            // 계정계 응답을 분석하여 커스텀 예외로 변환
             ErrorCode mappedError = mapFeignExceptionToErrorCode(e);
-            throw new CustomException(mappedError);
+            return PaymentAuthorizeResponse.fail(mappedError);
 
         } catch (Exception e) {
             // 4. 그 외 예상치 못한 예외 처리
             log.error("[PAYMENT_AUTHORIZE] Unexpected error during request processing.", e);
-            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+            return PaymentAuthorizeResponse.fail(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -170,25 +170,22 @@ public class PaymentService {
             log.info("[Feign Mapping] Received core error code: {}", accountErrorCode);
 
             // 2. 계정계 비즈니스 오류 코드 매핑
-            switch (accountErrorCode) {
-                case "BAL_3001":
-                    // 잔액 부족 -> HTTP 403 (Enum에 정의됨)
-                    log.warn("[Feign Mapping] Mapped core error BAL_3001 to BALANCE_INSUFFICIENT.");
-                    return ErrorCode.BALANCE_INSUFFICIENT;
-                case "VAL_3001":
-                    // 검증 토큰 만료 -> HTTP 403 (Enum에 정의됨)
-                    log.warn("[Feign Mapping] Mapped core error VAL_3001 to TOKEN_EXPIRED_OR_INVALID.");
-                    return ErrorCode.TOKEN_EXPIRED_OR_INVALID;
-                case "ACCT_4001":
-                    // 계좌 조회 실패 -> HTTP 404 (Enum에 정의됨)
-                    log.warn("[Feign Mapping] Mapped core error ACCT_4001 to ACCOUNT_NOT_FOUND.");
-                    return ErrorCode.ACCOUNT_NOT_FOUND;
-                default:
-                    // 계정계에서 정의되지 않은 비즈니스 코드 (4xx)가 넘어온 경우
-                    log.warn("[Feign Mapping] Received unknown core error code: {}. Defaulting to INTERNAL_SERVER_ERROR.", accountErrorCode);
-                    return ErrorCode.INTERNAL_SERVER_ERROR;
+            Map<String, ErrorCode> errorCodeMap = Map.of(
+                    "BAL_3001", ErrorCode.BALANCE_INSUFFICIENT,
+                    "VAL_3001", ErrorCode.TOKEN_EXPIRED_OR_INVALID,
+                    "ACCT_4001", ErrorCode.ACCOUNT_NOT_FOUND
+            );
+
+            ErrorCode mappedErrorCode = errorCodeMap.get(accountErrorCode);
+
+            if (mappedErrorCode != null) {
+                log.warn("[Feign Mapping] Mapped core error {} to {}.", accountErrorCode, mappedErrorCode.name(),e);
+                return mappedErrorCode;
             }
 
+            // 계정계에서 정의되지 않은 비즈니스 코드 (4xx)가 넘어온 경우
+            log.warn("[Feign Mapping] Received unknown core error code: {}. Defaulting to INTERNAL_SERVER_ERROR.", accountErrorCode);
+            return ErrorCode.INTERNAL_SERVER_ERROR;
         } catch (Exception parseException) {
             log.error("[Feign Mapping Error] Failed to parse Feign response body for error mapping. Status: {}", e.status(), parseException);
         }
