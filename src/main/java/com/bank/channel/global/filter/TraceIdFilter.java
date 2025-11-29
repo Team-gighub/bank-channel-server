@@ -63,7 +63,7 @@ public class TraceIdFilter extends OncePerRequestFilter {
                     traceId);
             
             // 7. MDC 정리 (메모리 누수 방지)
-            MDC.clear();
+            MDC.remove(MDC_TRACE_ID_KEY);
         }
     }
 
