@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "rudska6/worket-server"
+        DOCKER_IMAGE = "rudska6/bank-channel"
         DOCKER_TAG = "latest"
         EC2_HOST = "ubuntu@${SERVER_IP}"        // 백엔드 서버 IP
         EC2_KEY = "deploy-key"                  // Jenkins SSH key ID
@@ -13,9 +13,9 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main',
+                git branch: 'feature/deploy-setup',
                     credentialsId: 'github',
-                    url: 'https://github.com/Team-gighub/worket-server.git'
+                    url: 'https://github.com/Team-gighub/bank-channel-server.git'
             }
         }
 
@@ -53,12 +53,12 @@ pipeline {
                 sshagent(credentials: ['deploy-key']) {
                     sh """
                     ssh -v -o StrictHostKeyChecking=no ${EC2_HOST} '
-                        cd ~/worket-server || mkdir ~/worket-server && cd ~/worket-server;
+                        cd ~/bank-channel || mkdir ~/bank-channel && cd ~/bank-channel;
 
                         # 최신 이미지 pull
                         docker pull ${DOCKER_IMAGE}:${DOCKER_TAG};
 
-                        docker rm -f worket-server || true
+                        docker rm -f bank-channel || true
 
                         docker compose up -d;
                     '
