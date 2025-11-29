@@ -1,9 +1,6 @@
 package com.bank.channel.baas.controller;
 
-import com.bank.channel.baas.dto.NonBank.PaymentApprovalResponse;
-import com.bank.channel.baas.dto.NonBank.PaymentAuthorizeRequest;
-import com.bank.channel.baas.dto.NonBank.PaymentConfirmRequest;
-import com.bank.channel.baas.dto.NonBank.PaymentConfirmResponse;
+import com.bank.channel.baas.dto.NonBank.*;
 import com.bank.channel.baas.service.PaymentService;
 import com.bank.channel.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +20,7 @@ public class PaymentController {
      * POST /payment/authorize
      * [결제 요청] API 엔드포인트: 외부 시스템의 요청을 처리합니다.
      */
-    @PostMapping("/request")
+    @PostMapping("/authorize")
     public void authorizePayment(
             @RequestHeader(name = "Authorization", required = false) String authorizationHeader,
             @RequestBody PaymentAuthorizeRequest request
@@ -35,10 +32,10 @@ public class PaymentController {
      * POST /payment/approval
      * [결제 요청] API 엔드포인트: 외부 시스템의 요청을 처리합니다.
      */
-    @PostMapping("/request")
+    @PostMapping("/approval")
     public ApiResponse<PaymentApprovalResponse> approvePayment(
             @RequestHeader(name = "Authorization", required = false) String authorizationHeader,
-            @RequestBody PaymentAuthorizeRequest request
+            @RequestBody PaymentApprovalRequest request
     ) {
         PaymentApprovalResponse response = paymentService.approvePayment(request);
         return ApiResponse.success(response);
@@ -48,7 +45,7 @@ public class PaymentController {
      * POST /payment/confirm
      * [결제 요청] API 엔드포인트: 외부 시스템의 요청을 처리합니다.
      */
-    @PostMapping("/request")
+    @PostMapping("/confirm")
     public ApiResponse<PaymentConfirmResponse> requestEscrow(
             @RequestHeader(name = "Authorization", required = false) String authorizationHeader,
             @RequestBody PaymentConfirmRequest request
