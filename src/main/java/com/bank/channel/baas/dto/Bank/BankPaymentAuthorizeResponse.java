@@ -12,5 +12,6 @@ import java.math.BigDecimal;
 @Builder
 public class BankPaymentAuthorizeResponse {
     private final String orderNo;
-    private final BigDecimal amount;
+    private final String confirmToken;
+    private final String escrowId;
 }
