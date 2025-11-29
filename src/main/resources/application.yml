@@ -21,3 +21,11 @@ spring:
 logging:
   pattern:
     console: '%d{yyyy-MM-dd HH:mm:ss} [%X{traceId}] %-5level %logger{36} - %msg%n'
+  level:
+    # Feign Client 로깅 (개발: DEBUG, 운영: INFO)
+    com.bank.channel.baas.service.AccountSystemClient: DEBUG
+# Feign Client에서 사용되는 URL
+external:
+  api:
+    account-system:
+      url: ${ACCOUNT_SERVER_URL}
