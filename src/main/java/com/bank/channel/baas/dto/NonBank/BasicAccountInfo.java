@@ -1,11 +1,11 @@
 package com.bank.channel.baas.dto.NonBank;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 
 @Getter
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 public class BasicAccountInfo {
     private final String accountNo;

@@ -3,6 +3,7 @@ package com.bank.channel.baas.service;
 import com.bank.channel.baas.dto.Bank.*;
 import com.bank.channel.baas.dto.NonBank.PaymentApprovalRequest;
 import com.bank.channel.baas.dto.NonBank.PaymentConfirmRequest;
+import lombok.Value;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * [계정계] 시스템 (Core Server)과의 통신을 위한 Feign Client
  * - 채널계 요청을 계정계로 전달하는 역할을 합니다.
  */
-@FeignClient(name = "account-system", url = "${external.api.account-system.url}")
+@FeignClient(name = "account-system", url = "http://")// TODO: 계정계 url로 수정 필요
 public interface AccountSystemClient {
 
     /**
