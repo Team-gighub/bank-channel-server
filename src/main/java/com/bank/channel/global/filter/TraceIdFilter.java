@@ -38,7 +38,7 @@ public class TraceIdFilter extends OncePerRequestFilter {
         String traceId = request.getHeader(TRACE_ID_HEADER);
         
         // 2. 없으면 새로 생성 (최초 요청인 경우)
-        if (traceId == null || traceId.isEmpty()) {
+        if (!org.springframework.util.StringUtils.hasText(traceId)) {
             traceId = generateTraceId();
         }
 
