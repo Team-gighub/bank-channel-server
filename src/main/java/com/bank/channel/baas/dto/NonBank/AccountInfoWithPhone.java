@@ -6,5 +6,5 @@ import lombok.Getter;
 @Getter
 @Builder
 public class AccountInfoWithPhone extends BasicAccountInfo {
-    private String phone;
+    private final String phone;
 }

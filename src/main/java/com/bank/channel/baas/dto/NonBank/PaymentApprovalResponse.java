@@ -9,5 +9,5 @@ import lombok.Getter;
 @Getter
 @Builder
 public class PaymentApprovalResponse {
-    private String escrowId; // 에스크로 결제 승인 TID
+    private final String escrowId; // 에스크로 결제 승인 TID
 }

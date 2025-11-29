@@ -1,7 +1,6 @@
 package com.bank.channel.baas.controller;
 
-import com.bank.channel.baas.dto.NonBank.PaymentRequest;
-import com.bank.channel.baas.dto.NonBank.PaymentRequestResponse;
+import com.bank.channel.baas.dto.NonBank.PaymentAuthorizeRequest;
 import com.bank.channel.baas.service.EscrowService;
 import com.bank.channel.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +23,7 @@ public class EscrowController {
     @PostMapping("/request")
     public ApiResponse<PaymentRequestResponse> requestEscrow(
             @RequestHeader(name = "Authorization", required = false) String authorizationHeader,
-            @RequestBody PaymentRequest request
+            @RequestBody PaymentAuthorizeRequest request
     ) {
         PaymentRequestResponse response = escrowService.requestEscrow(request);
         return ApiResponse.success(response);

@@ -5,12 +5,10 @@ import lombok.Getter;
 
 /**
  * [계정계 전용]
- * [결제 승인] API (/payment/approval) 요청 DTO
+ * [결제 승인] API (/payment/approval) 응답 DTO
  */
 @Builder
 @Getter
-public class BankPaymentApprovalRequest {
+public class BankPaymentApprovalResponse {
     private final String escrowId;
-    private final String confirmToken;
-
 }

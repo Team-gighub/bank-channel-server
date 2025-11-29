@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class BasicAccountInfo {
-    private String accountNo;
-    private String bankCode;
-    private String name;
+    private final String accountNo;
+    private final String bankCode;
+    private final String name;
 }

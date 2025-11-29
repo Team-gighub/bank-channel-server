@@ -9,7 +9,6 @@ import lombok.Getter;
 @Getter
 @Builder
 public class PaymentApprovalRequest {
-    private String merchantId;
-    private String orderNo;
-    private String confirmToken;
+    private final String escrowId;
+    private final String confirmToken;
 }

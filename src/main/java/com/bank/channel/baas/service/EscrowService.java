@@ -1,9 +1,8 @@
 package com.bank.channel.baas.service;
 
-import com.bank.channel.baas.dto.Bank.BankPaymentRequest;
-import com.bank.channel.baas.dto.NonBank.BasicAccountInfo;
-import com.bank.channel.baas.dto.NonBank.PaymentRequest;
-import com.bank.channel.baas.dto.NonBank.PaymentRequestResponse;
+import com.bank.channel.baas.dto.Bank.BankPaymentApprovalRequest;
+import com.bank.channel.baas.dto.Bank.BankPaymentAuthorizeRequest;
+import com.bank.channel.baas.dto.NonBank.*;
 import com.bank.channel.global.exception.CustomException;
 import com.bank.channel.global.exception.ErrorCode;
 import feign.FeignException;
@@ -24,11 +23,11 @@ public class EscrowService {
     /**
      * 결제 요청 로직: 외부 요청을 받아 DTO를 가공하여 계정계로 전달
      */
-    public PaymentRequestResponse requestEscrow(PaymentRequest request) {
+    public PaymentRequestResponse requestEscrow(PaymentAuthorizeRequest request) {
         log.info("[PAYMENT_REQUEST] Start processing request. OrderNo: {}", request.getOrderNo());
 
         // 1. 외부 요청 DTO를 계정계 전용 DTO로 변환/가공
-        BankPaymentRequest accountRequest = convertToAccountSystemRequest(request);
+        BankPaymentAuthorizeRequest accountRequest = convertToAccountSystemRequest(request);
 
         try {
             // 2. 계정계 Feign Client 호출 (가공된 DTO 사용)
@@ -56,10 +55,37 @@ public class EscrowService {
     }
 
     /**
-     * 전용 DTO 변환 로직 (가공)
-     * - EscrowRequest -> AccountSystemEscrowRequest로 변환하며 불필요한 필드(예: phone)를 제거합니다.
+     * 결제 승인 로직: 외부 요청을 받아 DTO를 가공하여 계정계로 전달
      */
-    private BankPaymentRequest convertToAccountSystemRequest(PaymentRequest channelRequest) {
+    public PaymentApprovalResponse approvePayment(PaymentApprovalRequest request) {
+        log.info("[PAYMENT_APPROVAL] Start processing request. OrderNo: {}", request.getOrderNo());
+
+        // 1. 외부 요청 DTO를 계정계 전용 DTO로 변환/가공
+        BankPaymentApprovalRequest accountRequest = convertToBankApprovalRequest(request);
+
+        try {
+            // 2. 계정계 Feign Client 호출
+            PaymentApprovalResponse response = accountSystemClient.approvePayment(accountRequest);
+
+            log.info("[PAYMENT_APPROVAL] Successfully received response from core system. EscrowId: {}",
+                    response.getEscrowId());
+            return response;
+
+        } catch (FeignException e) {
+            log.error("[PAYMENT_APPROVAL] Feign error occurred. Status: {}, Message: {}",
+                    e.status(), e.contentUTF8(), e);
+            //throw new CustomException(ErrorCode.BANK_API_ERROR, e.contentUTF8()); // 적절한 예외 변환
+        } catch (Exception e) {
+            log.error("[PAYMENT_APPROVAL] Unexpected error during request processing.", e);
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    /**
+     * 결제 요청 전용 DTO 변환
+     */
+    private BankPaymentAuthorizeRequest convertToAccountSystemRequest(PaymentAuthorizeRequest channelRequest) {
 
         // 1. PayerInfo 변환
         BasicAccountInfo payerInfo = BasicAccountInfo.builder()
@@ -76,10 +102,35 @@ public class EscrowService {
                 .build();
 
         // 3. 메인 DTO 빌드 및 반환
-        return BankPaymentRequest.builder()
+        return BankPaymentAuthorizeRequest.builder()
                 .amount(channelRequest.getAmount())
                 .payerInfo(payerInfo)
                 .payeeInfo(payeeInfo)
+                .build();
+    }
+
+    /**
+     * 결제 승인 전용 DTO 변환
+     */
+    private BankPaymentApprovalRequest convertToBankApprovalRequest(PaymentApprovalRequest channelRequest) {
+
+        BasicAccountInfo bankPayerInfo = BasicAccountInfo.builder()
+                .accountNo(channelRequest.getPayerInfo().getAccountNo())
+                .bankCode(channelRequest.getPayerInfo().getBankCode())
+                .name(channelRequest.getPayerInfo().getName())
+                .build();
+
+        BasicAccountInfo bankPayeeInfo = BasicAccountInfo.builder()
+                .accountNo(channelRequest.getPayeeInfo().getAccountNo())
+                .bankCode(channelRequest.getPayeeInfo().getBankCode())
+                .name(channelRequest.getPayeeInfo().getName())
+                .build();
+
+        return BankPaymentApprovalRequest.builder()
+                .orderNo(channelRequest.getOrderNo())
+                .amount(channelRequest.getAmount())
+                .payerInfo(bankPayerInfo)
+                .payeeInfo(bankPayeeInfo)
                 .build();
     }
 }
