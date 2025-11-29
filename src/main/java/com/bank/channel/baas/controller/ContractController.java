@@ -1,5 +1,7 @@
 package com.bank.channel.baas.controller;
 
+import com.bank.channel.baas.dto.NonBank.ContractRegisterRequest;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.http.ResponseEntity;
@@ -26,14 +28,15 @@ public class ContractController {
     @PostMapping("/register")
     public ResponseEntity<?> registerContract(
             @RequestHeader(value = "Authorization", required = false) String authorization,
-            @RequestBody Map<String, Object> request
+            @RequestBody @Valid ContractRegisterRequest request
     ) {
         String traceId = MDC.get("traceId");
 
-        log.info("[계약등록] TraceId: {}, PaymentId: {}, OrderNo: {}", 
+        log.info("[계약등록] TraceId: {}, PaymentId: {}, OrderNo: {}, UserId: {}", 
                 traceId, 
-                request.get("paymentId"),
-                request.get("orderNo"));
+                request.getPaymentId(),
+                request.getOrderNo(),
+                request.getUserId());
 
         // TODO: 실제 계약 데이터 등록 로직 구현
         // 1. paymentId 검증
