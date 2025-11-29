@@ -19,7 +19,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RequestMapping("/payment")
 public class PaymentController {
 
-    private final PaymentService paymentService = null;
+    private final PaymentService paymentService;
 
     /**
      * POST /payment/authorize
