@@ -17,3 +17,8 @@ spring:
       ddl-auto: ${DDL_AUTO}
     database-platform: org.hibernate.dialect.MySQLDialect
 
+# Feign Client에서 사용되는 URL
+external:
+  api:
+    account-system:
+      url: ${ACCOUNT_SERVER_URL}
