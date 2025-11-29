@@ -33,10 +33,11 @@ public class TraceTestController {
         log.info("===========================================");
 
         // 응답으로도 반환
-        Map<String, String> response = new HashMap<>();
-        response.put("traceId", traceId != null ? traceId : "없음");
-        response.put("message", "TraceId가 자동으로 발급되었습니다!");
-        response.put("설명", "UUID 기반으로 생성된 32자리 고유 ID입니다.");
+        Map<String, String> response = Map.of(
+                "traceId", traceId != null ? traceId : "없음",
+                "message", "TraceId가 자동으로 발급되었습니다!",
+                "설명", "UUID 기반으로 생성된 32자리 고유 ID입니다."
+        );
         
         return response;
     }
