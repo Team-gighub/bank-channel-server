@@ -1,7 +1,7 @@
 package com.bank.channel.baas.service;
 
 import com.bank.channel.baas.domain.ContractData;
-import com.bank.channel.baas.domain.repository.ContractDataRepository;
+import com.bank.channel.baas.repository.ContractDataRepository;
 import com.bank.channel.baas.dto.NonBank.ContractRegisterRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
