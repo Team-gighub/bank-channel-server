@@ -9,7 +9,6 @@ import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 /**
@@ -50,39 +49,13 @@ public class ContractService {
     /**
      * DTO → Entity 변환
      * 
-     * String → Long, String → BigDecimal 타입 변환 처리
+     * Entity의 정적 팩토리 메서드 from()을 사용
      */
     private ContractData convertToEntity(ContractRegisterRequest request) {
         // contractId 생성 (UUID)
         String contractId = UUID.randomUUID().toString().replace("-", "");
 
-        // String → Long 변환
-        Long businessSectorYears = null;
-        try {
-            businessSectorYears = Long.parseLong(request.getBusinessSectorYears());
-        } catch (NumberFormatException e) {
-            log.warn("업력 변환 실패: {}", request.getBusinessSectorYears());
-        }
-
-        // String → BigDecimal 변환
-        BigDecimal annualTotalIncome = null;
-        try {
-            annualTotalIncome = new BigDecimal(request.getAnnualIncomeTotal());
-        } catch (NumberFormatException e) {
-            log.warn("연간누적소득액 변환 실패: {}", request.getAnnualIncomeTotal());
-        }
-
-        return ContractData.builder()
-                .contractId(contractId)
-                .paymentTid(request.getPaymentId())
-                .contractTitle(request.getMetadata().getContractInfo().getTitle())
-                .contractDescription(null) // TODO: DTO에 없음, 필요시 추가
-                .name(request.getMetadata().getClientInfo().getName())
-                .phone(request.getMetadata().getClientInfo().getPhone())
-                .businessSector(request.getBusinessSector())
-                .businessSectorYears(businessSectorYears)
-                .annualTotalIncome(annualTotalIncome)
-                .contractUrl(request.getContractUrl())
-                .build();
+        // Entity의 정적 팩토리 메서드 사용
+        return ContractData.from(request, contractId);
     }
 }
