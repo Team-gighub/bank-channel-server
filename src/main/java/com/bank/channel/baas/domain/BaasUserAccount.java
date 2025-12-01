@@ -7,7 +7,10 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "baas_user_accounts")
+@Table(
+        name = "baas_user_accounts",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"account_number", "bank_code"})})
 @Getter
 @Builder(toBuilder = true) // Builder 패턴 추가
 @AllArgsConstructor(access = AccessLevel.PROTECTED) // Builder를 위한 AllArgsConstructor 추가

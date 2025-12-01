@@ -3,6 +3,7 @@ package com.bank.channel.baas.service;
 import com.bank.channel.baas.domain.BaasEndUser;
 import com.bank.channel.baas.domain.BaasUserAccount;
 import com.bank.channel.baas.domain.Merchant;
+import com.bank.channel.baas.domain.enums.Bank;
 import com.bank.channel.baas.dto.NonBank.AccountInfoWithPhone;
 import com.bank.channel.baas.dto.NonBank.BasicAccountInfo;
 import com.bank.channel.baas.dto.NonBank.PaymentAuthorizeRequest;
@@ -91,7 +92,6 @@ public class EndUserService {
                     BaasUserAccount newAccount = BaasUserAccount.builder()
                             .endUser(endUser)
                             .bankCode(payerInfo.getBankCode())
-                            // 은행 코드 -> 은행명 변환 로직 호출
                             .bankName(getBankName(payerInfo.getBankCode()))
                             .accountNumber(payerInfo.getAccountNo())
                             .accountHolderName(payerInfo.getName())
@@ -107,19 +107,9 @@ public class EndUserService {
     private String generateUniqueId() { return UUID.randomUUID().toString(); }
 
     /**
-     * 은행 코드를 은행명으로 변환하는 로직
+     * 은행 코드를 은행명으로 변환
      */
     private String getBankName(String bankCode) {
-        return switch (bankCode) {
-            case "020" -> "우리은행";
-            case "011" -> "농협은행";
-            case "088" -> "신한은행";
-            case "090" -> "카카오뱅크";
-            case "003" -> "기업은행";
-            case "081" -> "하나은행";
-            case "092" -> "토스";
-            case "045" -> "새마을금고";
-            default -> "기타은행";
-        };
+        return Bank.getNameByCode(bankCode);
     }
 }

@@ -2,7 +2,6 @@ package com.bank.channel.baas.domain;
 
 import com.bank.channel.baas.domain.enums.MerchantStatus;
 import com.bank.channel.baas.domain.enums.MerchantType;
-import com.bank.channel.baas.dto.NonBank.PaymentAuthorizeRequest;
 import com.bank.channel.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
