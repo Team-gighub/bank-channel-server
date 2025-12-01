@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/payment")
 public class PaymentController {
 
-    private final PaymentService paymentService = null;
+    private final PaymentService paymentService;
 
     /**
      * POST /payment/authorize
