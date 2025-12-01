@@ -1,15 +1,18 @@
 package com.bank.channel.global.filter;
 
+import com.bank.channel.baas.service.ApiCallLogService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
@@ -22,7 +25,10 @@ import java.util.UUID;
  */
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class TraceIdFilter extends OncePerRequestFilter {
+
+    private final ApiCallLogService apiCallLogService;
 
     private static final String TRACE_ID_HEADER = "X-Trace-Id";
     private static final String MDC_TRACE_ID_KEY = "traceId";
@@ -48,7 +54,10 @@ public class TraceIdFilter extends OncePerRequestFilter {
         // 4. 응답 헤더에 추가 (클라이언트가 확인 가능)
         response.addHeader(TRACE_ID_HEADER, traceId);
 
-        // 5. 요청 로깅
+        // 5. 요청 시각 기록
+        LocalDateTime requestAt = LocalDateTime.now();
+        
+        // 6. 요청 로깅
         log.info("API Request - Method: {}, URI: {}, TraceId: {}", 
                 request.getMethod(), 
                 request.getRequestURI(), 
@@ -57,12 +66,33 @@ public class TraceIdFilter extends OncePerRequestFilter {
         try {
             filterChain.doFilter(request, response);
         } finally {
-            // 6. 응답 로깅
+            // 7. 응답 시각 기록
+            LocalDateTime responseAt = LocalDateTime.now();
+            
+            // 8. 응답 로깅
             log.info("API Response - Status: {}, TraceId: {}", 
                     response.getStatus(), 
                     traceId);
             
-            // 7. MDC 정리 (메모리 누수 방지)
+            // 9. API 호출 로그 저장 (비동기로 저장 - 실패해도 API에 영향 없음)
+            try {
+                // TODO: merchantId 추출 로직 필요 (Authorization 헤더 또는 RequestBody)
+                String merchantId = extractMerchantId(request);
+                
+                apiCallLogService.saveApiCallLog(
+                    traceId,
+                    merchantId,
+                    request.getRequestURI(),
+                    request.getMethod(),
+                    requestAt,
+                    responseAt,
+                    response.getStatus()
+                );
+            } catch (Exception e) {
+                log.error("API 로그 저장 실패 - TraceId: {}", traceId, e);
+            }
+            
+            // 10. MDC 정리 (메모리 누수 방지)
             MDC.remove(MDC_TRACE_ID_KEY);
         }
     }
@@ -73,5 +103,19 @@ public class TraceIdFilter extends OncePerRequestFilter {
      */
     private String generateTraceId() {
         return UUID.randomUUID().toString().replace("-", "");
+    }
+
+    /**
+     * merchantId 추출
+     * 
+     * TODO: 실제 구현 필요
+     * - Authorization 헤더 파싱
+     * - JWT 토큰에서 추출
+     * - 또는 요청 Body에서 추출
+     */
+    private String extractMerchantId(HttpServletRequest request) {
+        // 임시: Authorization 헤더가 있으면 사용, 없으면 "UNKNOWN"
+        String authorization = request.getHeader("Authorization");
+        return authorization != null ? "EXTRACTED_FROM_TOKEN" : "UNKNOWN";
     }
 }

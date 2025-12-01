@@ -3,6 +3,7 @@ package com.bank.channel.baas.domain;
 import com.bank.channel.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,31 @@ import java.math.BigDecimal;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ContractData extends BaseEntity {
+
+    @Builder
+    private ContractData(
+            String contractId,
+            String paymentTid,
+            String contractTitle,
+            String contractDescription,
+            String name,
+            String phone,
+            String businessSector,
+            Long businessSectorYears,
+            BigDecimal annualTotalIncome,
+            String contractUrl
+    ) {
+        this.contractId = contractId;
+        this.paymentTid = paymentTid;
+        this.contractTitle = contractTitle;
+        this.contractDescription = contractDescription;
+        this.name = name;
+        this.phone = phone;
+        this.businessSector = businessSector;
+        this.businessSectorYears = businessSectorYears;
+        this.annualTotalIncome = annualTotalIncome;
+        this.contractUrl = contractUrl;
+    }
 
     @Id
     @Column(name = "contract_id", length = 50)

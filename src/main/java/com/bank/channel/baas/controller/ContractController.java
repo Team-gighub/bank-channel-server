@@ -1,7 +1,9 @@
 package com.bank.channel.baas.controller;
 
 import com.bank.channel.baas.dto.NonBank.ContractRegisterRequest;
+import com.bank.channel.baas.service.ContractService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +18,11 @@ import java.util.Map;
  */
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/contracts")
 public class ContractController {
+
+    private final ContractService contractService;
 
     /**
      * 계약 데이터 등록 API
@@ -38,11 +43,11 @@ public class ContractController {
                 request.getOrderNo(),
                 request.getUserId());
 
-        // TODO: 실제 계약 데이터 등록 로직 구현
-        // 1. paymentId 검증
-        // 2. 계약 데이터 저장 (DB)
-        // 3. 계정계에 계약 정보 전송
+        // 계약 데이터 저장
+        String contractId = contractService.registerContract(request);
+        
+        log.info("[계약등록] 완료 - TraceId: {}, ContractId: {}", traceId, contractId);
 
-        return ResponseEntity.ok(Map.of());
+        return ResponseEntity.ok(Map.of("contractId", contractId));
     }
 }
