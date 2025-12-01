@@ -1,5 +1,6 @@
 package com.bank.channel.baas.dto.NonBank;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -7,7 +8,9 @@ import lombok.Getter;
 @Builder
 public class ContractMetaData {
 
+    @NotNull
     private final ContractInfo contractInfo;
+    @NotNull
     private final ClientInfo clientInfo;
     private final FreelancerInfo freelancerInfo;
 

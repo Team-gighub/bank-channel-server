@@ -1,5 +1,6 @@
 package com.bank.channel.baas.dto.NonBank;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,5 +22,7 @@ public class ContractRegisterRequest {
     private final BigDecimal annualIncomeTotal; // 연간누적소득액
     private final String contractUrl; // 계약서 원본 S3 URL
     private final String hash; // 계약서 원본 + 메타데이터 hash값
+    @Valid
+    @NotNull
     private final ContractMetaData metadata; // 계약서 메타 데이터
 }

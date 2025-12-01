@@ -3,6 +3,7 @@ package com.bank.channel.baas.controller;
 import com.bank.channel.baas.dto.NonBank.ContractRegisterRequest;
 import com.bank.channel.baas.service.ContractDataService;
 import com.bank.channel.global.response.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class ContractDataController {
      */
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<Void> registerContract(@RequestBody ContractRegisterRequest request) {
+    public ApiResponse<Void> registerContract(@Valid @RequestBody ContractRegisterRequest request) {
         contractDataService.registerContract(request);
         return ApiResponse.success();
     }
