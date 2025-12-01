@@ -1,4 +1,4 @@
-package com.bank.channel.baas.domain.repository;
+package com.bank.channel.baas.repository;
 
 import com.bank.channel.baas.domain.ContractData;
 import org.springframework.data.jpa.repository.JpaRepository;
