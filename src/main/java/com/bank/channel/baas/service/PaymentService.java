@@ -8,6 +8,7 @@ import com.bank.channel.baas.dto.NonBank.*;
 import com.bank.channel.global.exception.CustomException;
 import com.bank.channel.global.exception.ErrorCode;
 import feign.FeignException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,13 +22,20 @@ import org.springframework.stereotype.Service;
 public class PaymentService {
 
     private final AccountSystemClient accountSystemClient;
+    private final EndUserService endUserService;
+    private final MerchantService merchantService;
 
     /**
      * 결제 인증 로직
      * 응답: HTTP Body 없음. 성공 시 successUrl로 리다이렉션 (쿼리 파라미터로 confirmToken, escrowId 전달)
      */
+    @Transactional
     public void authorizePayment(PaymentAuthorizeRequest request) {
         log.info("[PAYMENT_AUTHORIZE] Start processing request. OrderNo: {}", request.getOrderNo());
+
+        // 0. BaaS End User 및 계좌 정보 저장/업데이트 (트랜잭션 내에서 처리됨)
+        //merchantService.saveOrUpdate(request); // merchant table은 mock 데이터 사용
+        endUserService.saveOrUpdateUserAndAccount(request);
 
         // 1. 외부 요청 DTO를 계정계 전용 DTO로 변환/가공
         BankPaymentAuthorizeRequest accountRequest = convertToAccountSystemRequest(request);
