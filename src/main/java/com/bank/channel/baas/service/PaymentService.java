@@ -96,7 +96,7 @@ public class PaymentService {
 
         } catch (FeignException e) {
             log.error("[PAYMENT_CONFIRM] Feign error occurred. Status: {}, Message: {}", e.status(), e.contentUTF8(), e);
-            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR); // TODO: 적절한 예외 반환
+             throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR); // TODO: 적절한 예외 반환
         } catch (Exception e) {
             log.error("[PAYMENT_CONFIRM] Unexpected error during request processing.", e);
             throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
