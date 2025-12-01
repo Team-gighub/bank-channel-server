@@ -68,23 +68,25 @@ public class ApiKeyAuthService {
             return MerchantAuthResult.invalidApiKey();
         }
 
+        String actualTrustedId = trustedMerchantId.get();
+
         // 2. Request Body에 merchantId가 없는 경우 (교차 검증 불가)
         if (requestMerchantId == null || requestMerchantId.isBlank()) {
             log.debug("[API_KEY_AUTH] No merchantId in request body - using API Key only");
-            return MerchantAuthResult.success(trustedMerchantId.get());
+            return MerchantAuthResult.success(actualTrustedId);
         }
 
         // 3. 교차 검증: API Key의 merchantId vs Request Body의 merchantId
-        if (!trustedMerchantId.get().equals(requestMerchantId)) {
+        if (!actualTrustedId.equals(requestMerchantId)) {
             log.error("[SECURITY_THREAT] Merchant ID mismatch! " +
-                    "API Key merchant: {}, Request merchant: {}",
-                    trustedMerchantId.get(), requestMerchantId);
-            return MerchantAuthResult.mismatch(trustedMerchantId.get(), requestMerchantId);
+                            "API Key merchant: {}, Request merchant: {}",
+                    actualTrustedId, requestMerchantId);
+            return MerchantAuthResult.mismatch(actualTrustedId, requestMerchantId);
         }
 
         // 4. 검증 성공
-        log.debug("[API_KEY_AUTH] Cross validation passed - merchantId: {}", trustedMerchantId.get());
-        return MerchantAuthResult.success(trustedMerchantId.get());
+        log.debug("[API_KEY_AUTH] Cross validation passed - merchantId: {}", actualTrustedId);
+        return MerchantAuthResult.success(actualTrustedId);
     }
 
     /**

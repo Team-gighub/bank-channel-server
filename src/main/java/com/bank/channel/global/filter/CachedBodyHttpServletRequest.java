@@ -22,9 +22,11 @@ import java.io.*;
 public class CachedBodyHttpServletRequest extends HttpServletRequestWrapper {
 
     private final byte[] cachedBody;
+    private final String characterEncoding;
 
     public CachedBodyHttpServletRequest(HttpServletRequest request) throws IOException {
         super(request);
+        this.characterEncoding = request.getCharacterEncoding();
         // Request Body를 미리 읽어서 캐싱
         InputStream requestInputStream = request.getInputStream();
         this.cachedBody = StreamUtils.copyToByteArray(requestInputStream);
@@ -38,14 +40,16 @@ public class CachedBodyHttpServletRequest extends HttpServletRequestWrapper {
     @Override
     public BufferedReader getReader() throws IOException {
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(this.cachedBody);
-        return new BufferedReader(new InputStreamReader(byteArrayInputStream));
+        java.nio.charset.Charset charset = this.characterEncoding != null ? java.nio.charset.Charset.forName(this.characterEncoding) : java.nio.charset.StandardCharsets.UTF_8;
+        return new BufferedReader(new InputStreamReader(byteArrayInputStream, charset));
     }
 
     /**
      * 캐싱된 Body를 String으로 반환
      */
     public String getCachedBody() {
-        return new String(this.cachedBody);
+        java.nio.charset.Charset charset = this.characterEncoding != null ? java.nio.charset.Charset.forName(this.characterEncoding) : java.nio.charset.StandardCharsets.UTF_8;
+        return new String(this.cachedBody, charset);
     }
 
     /**

@@ -142,10 +142,9 @@ public class TraceIdFilter extends OncePerRequestFilter {
         String errorMessage = "SECURITY_THREAT".equals(merchantId) 
                 ? "인증 실패: Merchant ID 불일치" 
                 : "인증 실패: 유효하지 않은 API Key";
-        
-        response.getWriter().write(String.format(
-                "{\"success\":false,\"error\":{\"code\":\"AUTH_001\",\"message\":\"%s\"}}",
-                errorMessage
+
+        response.getWriter().write(objectMapper.writeValueAsString(
+                com.bank.channel.global.response.ApiResponse.failure("AUTH_001", errorMessage)
         ));
         
         // 2. 보안 위협 로그 기록
