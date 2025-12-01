@@ -7,6 +7,8 @@ import jakarta.servlet.http.HttpServletRequestWrapper;
 import org.springframework.util.StreamUtils;
 
 import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Request Body를 여러 번 읽을 수 있도록 캐싱하는 Wrapper
@@ -26,10 +28,8 @@ public class CachedBodyHttpServletRequest extends HttpServletRequestWrapper {
 
     public CachedBodyHttpServletRequest(HttpServletRequest request) throws IOException {
         super(request);
-        this.characterEncoding = request.getCharacterEncoding();
-        // Request Body를 미리 읽어서 캐싱
-        InputStream requestInputStream = request.getInputStream();
-        this.cachedBody = StreamUtils.copyToByteArray(requestInputStream);
+        this.characterEncoding = request.getCharacterEncoding(); // 요청의 인코딩 저장
+        this.cachedBody = StreamUtils.copyToByteArray(request.getInputStream()); // 바디 캐싱
     }
 
     @Override
@@ -40,15 +40,22 @@ public class CachedBodyHttpServletRequest extends HttpServletRequestWrapper {
     @Override
     public BufferedReader getReader() throws IOException {
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(this.cachedBody);
-        java.nio.charset.Charset charset = this.characterEncoding != null ? java.nio.charset.Charset.forName(this.characterEncoding) : java.nio.charset.StandardCharsets.UTF_8;
+
+        Charset charset = (this.characterEncoding != null)
+                ? Charset.forName(this.characterEncoding)
+                : StandardCharsets.UTF_8;
+
         return new BufferedReader(new InputStreamReader(byteArrayInputStream, charset));
     }
 
     /**
-     * 캐싱된 Body를 String으로 반환
+     * 캐싱된 Body를 문자열로 반환 (요청의 charset 적용)
      */
     public String getCachedBody() {
-        java.nio.charset.Charset charset = this.characterEncoding != null ? java.nio.charset.Charset.forName(this.characterEncoding) : java.nio.charset.StandardCharsets.UTF_8;
+        Charset charset = (this.characterEncoding != null)
+                ? Charset.forName(this.characterEncoding)
+                : StandardCharsets.UTF_8;
+
         return new String(this.cachedBody, charset);
     }
 
@@ -68,7 +75,7 @@ public class CachedBodyHttpServletRequest extends HttpServletRequestWrapper {
             try {
                 return cachedBodyInputStream.available() == 0;
             } catch (IOException e) {
-                return false;
+                throw new RuntimeException(e);
             }
         }
 
