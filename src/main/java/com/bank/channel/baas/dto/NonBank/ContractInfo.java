@@ -13,5 +13,5 @@ public class ContractInfo {
     private final BigDecimal amount;
     private final String startDate;
     private final String endDate;
-    private String description;
+    private final String description;
 }

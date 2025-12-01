@@ -1,5 +1,6 @@
 package com.bank.channel.baas.dto.NonBank;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -9,8 +10,11 @@ import java.math.BigDecimal;
 @Builder
 public class ContractRegisterRequest {
 
+    @NotNull
     private final String paymentId; // 지급확정 TID
+    @NotNull
     private final String orderNo; // 거래 PK
+    @NotNull
     private final String userId; // 워켓 유저 PK
     private final String businessSector; // 업종
     private final Long businessSectorYears; // 업력

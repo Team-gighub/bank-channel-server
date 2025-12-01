@@ -18,7 +18,7 @@ public class ContractDataService {
 
     private final ContractDataRepository contractDataRepository;
 
-    public String registerContract(ContractRegisterRequest request) {
+    public void registerContract(ContractRegisterRequest request) {
 
         // 1. contract_id 생성 (UUID 사용 예시)
         String contractId = UUID.randomUUID().toString();
@@ -26,7 +26,5 @@ public class ContractDataService {
         ContractData contractData = ContractData.from(request, contractId);
         // 3. DB 저장
         contractDataRepository.save(contractData);
-        // 4. 응답 DTO 생성 및 반환
-        return contractId;
     }
 }
