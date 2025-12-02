@@ -106,12 +106,12 @@ public class UsageService {
 
         // 2. 비용 계산
         // 성공 비용 = 성공 건수 * 단위 성공 가격
-        BigDecimal costSuccess = new BigDecimal(successCount).multiply(new BigDecimal(successPrice));
+        BigDecimal costSuccess = new BigDecimal(successCount).multiply(successPrice);
 
         // 실패 비용 = 실패 건수 * 단위 실패 가격
         BigDecimal costFailure =
-                new BigDecimal(clientFailureCount).multiply(new BigDecimal(clientErrorPrice))
-                        .add(new BigDecimal(serverFailureCount).multiply(new BigDecimal(serverErrorPrice)));
+                new BigDecimal(clientFailureCount).multiply(clientErrorPrice)
+                        .add(new BigDecimal(serverFailureCount).multiply(serverErrorPrice));
 
         // 3. 총 비용 계산 및 소수점 처리
         return costSuccess.add(costFailure)
