@@ -8,7 +8,7 @@ import lombok.Getter;
 @Builder
 public class UsageRequest {
     @NotNull
-    private final String merchant_id;
+    private final String merchantId;
     @NotNull
     private final String startDate;
     @NotNull
