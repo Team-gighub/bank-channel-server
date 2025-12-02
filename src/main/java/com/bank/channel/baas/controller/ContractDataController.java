@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/contracts")
+@RequestMapping("api/v1/contracts")
 public class ContractDataController {
 
     private final ContractDataService contractDataService;
