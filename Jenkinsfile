@@ -22,7 +22,7 @@ pipeline {
         stage('Build JAR') {
             steps {
                 sh 'chmod +x gradlew'
-                sh './gradlew clean build -x test'
+                sh './gradlew clean build'
             }
         }
 
@@ -51,14 +51,22 @@ pipeline {
         stage('Deploy to EC2 (docker-compose)') {
             steps {
                 sshagent(credentials: ['deploy-key']) {
+
+                    // 1) docker-compose.yml & .env 전송
                     sh """
-                    ssh -v -o StrictHostKeyChecking=no ${EC2_HOST} '
-                        cd ~/bank-channel || mkdir ~/bank-channel && cd ~/bank-channel;
+                        scp -o ${COMPOSE_FILE} ${EC2_HOST}:~/bank-channel/${COMPOSE_FILE}
+                        scp -o ${ENV_FILE} ${EC2_HOST}:~/bank-channel/${ENV_FILE}
+                    """
+
+                    // 2) 원격에서 docker compose 재배포
+                    sh """
+                    ssh -v -o ${EC2_HOST} '
+                        mkdir -p ~/bank-channel && cd ~/bank-channel;
 
                         # 최신 이미지 pull
                         docker pull ${DOCKER_IMAGE}:${DOCKER_TAG};
 
-                        docker rm -f bank-channel || true
+                        docker compose down;
 
                         docker compose up -d;
                     '
