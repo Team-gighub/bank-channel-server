@@ -38,7 +38,11 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "COMMON_006", "서버 내부 오류가 발생했습니다."),
 
     // merchant 관련 에러
-    MERCHANT_NOT_FOUND(HttpStatus.NOT_FOUND, "MRCH_4001", "해당 가맹점 정보를 찾을 수 없습니다.");
+    MERCHANT_NOT_FOUND(HttpStatus.NOT_FOUND, "MRCH_4001", "해당 가맹점 정보를 찾을 수 없습니다."),
+
+    // 날짜 유효성 관련 에러
+    INVALID_DATE_FORMAT(HttpStatus.BAD_REQUEST, "DATE_4001", "날짜 형식이 올바르지 않습니다. (예: yyyy-MM-dd)"),
+    INVALID_DATE_RANGE(HttpStatus.BAD_REQUEST, "DATE_4002", "조회 시작일이 종료일보다 늦거나 기간이 유효하지 않습니다.");
 
     private final HttpStatus status;
     private final String code;
