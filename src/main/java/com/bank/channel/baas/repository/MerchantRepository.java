@@ -15,7 +15,7 @@ public interface MerchantRepository extends JpaRepository<Merchant, String> {
 
     /**
      * API Key로 Merchant 조회
-     * 
+     *
      * @param apiKey API Key
      * @return Merchant (Optional)
      */
@@ -24,10 +24,12 @@ public interface MerchantRepository extends JpaRepository<Merchant, String> {
     /**
      * merchantId와 apiKey가 모두 일치하는지 확인
      * 교차 검증용 -> 사용량 조회 또는 이용요금 산정 로직에 활용 예정
-     * 
+     *
      * @param merchantId Merchant ID
      * @param apiKey API Key
      * @return 존재 여부
      */
     boolean existsByMerchantIdAndApiKey(String merchantId, String apiKey);
+
+    Optional<Merchant> findByMerchantId(String merchantId);
 }

@@ -16,7 +16,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/payment")
+@RequestMapping("api/v1/payment")
 public class PaymentController {
 
     private final PaymentService paymentService;

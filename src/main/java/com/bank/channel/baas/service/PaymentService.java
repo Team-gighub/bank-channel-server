@@ -13,6 +13,7 @@ import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
@@ -25,14 +26,21 @@ import java.util.Map;
 public class PaymentService {
 
     private final AccountSystemClient accountSystemClient;
+    private final EndUserService endUserService;
+    private final MerchantService merchantService;
     private final ObjectMapper objectMapper;
 
     /**
      * 결제 인증 로직
      * 응답: orderNo, confirmToken, escrowId
      */
+    @Transactional
     public PaymentAuthorizeResponse authorizePayment(PaymentAuthorizeRequest request) {
         log.info("[PAYMENT_AUTHORIZE] Start processing request. OrderNo: {}", request.getOrderNo());
+
+        // 0. BaaS End User 및 계좌 정보 저장/업데이트 (트랜잭션 내에서 처리됨)
+        //merchantService.saveOrUpdate(request); // merchant table은 mock 데이터 사용
+        endUserService.saveOrUpdateUserAndAccount(request);
 
         // 1. 외부 요청 DTO를 계정계 전용 DTO로 변환/가공
         BankPaymentAuthorizeRequest accountRequest = convertToAccountSystemRequest(request);
@@ -84,7 +92,6 @@ public class PaymentService {
     }
 
     /**
-     * TODO: 구체화되면 수정 필요
      * 지급 확정 로직: 외부 요청을 받아 DTO를 계정계로 전달
      * 요청: marchantId, reqYmd, escrowId, changerId
      * 응답: paymentId

@@ -28,7 +28,8 @@ public class ContractData extends BaseEntity {
             String businessSector,
             Long businessSectorYears,
             BigDecimal annualTotalIncome,
-            String contractUrl
+            String contractUrl,
+            String hash
     ) {
         this.contractId = contractId;
         this.paymentTid = paymentTid;
@@ -40,6 +41,7 @@ public class ContractData extends BaseEntity {
         this.businessSectorYears = businessSectorYears;
         this.annualTotalIncome = annualTotalIncome;
         this.contractUrl = contractUrl;
+        this.hash = hash;
     }
 
     @Id
@@ -77,26 +79,6 @@ public class ContractData extends BaseEntity {
 
     @Column(name="hash")
     private String hash;
-
-    // @Builder 등을 사용하지 않고, 생성자를 통해 필드를 초기화
-    private ContractData(
-            String contractId, String paymentTid, String contractTitle,
-            String contractDescription, String name, String phone,
-            String businessSector, Long businessSectorYears,
-            BigDecimal annualTotalIncome, String contractUrl, String hash) {
-
-        this.contractId = contractId;
-        this.paymentTid = paymentTid;
-        this.contractTitle = contractTitle;
-        this.contractDescription = contractDescription;
-        this.name = name;
-        this.phone = phone;
-        this.businessSector = businessSector;
-        this.businessSectorYears = businessSectorYears;
-        this.annualTotalIncome = annualTotalIncome;
-        this.contractUrl = contractUrl;
-        this.hash = hash;
-    }
 
     /**
      * DTO와 생성된 ID를 기반으로 ContractData Entity를 생성하는 정적 팩토리 메서드

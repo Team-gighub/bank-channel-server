@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 public class PaymentAuthorizeRequest {
 
     private final String merchantId; // 고객사 ID
-    private final String userId; // 고객사 회원 ID ( 의뢰인 PK )
     private final String userName; // 고객사 회원명
     private final String productName; // 상품명 ( 워켓의 경우 계약명 )
     private final String orderNo; // 고객사 주문번호 ( 워켓의 경우 거래 PK )
