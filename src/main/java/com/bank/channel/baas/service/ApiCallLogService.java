@@ -49,7 +49,7 @@ public class ApiCallLogService {
 
             ApiCallLog apiCallLog = ApiCallLog.builder()
                     .traceId(traceId)
-                    .marchantId(merchantId != null ? merchantId : "UNKNOWN")
+                    .merchantId(merchantId != null ? merchantId : "UNKNOWN")
                     .apiEndpoint(apiEndpoint)
                     .httpMethod(HttpMethod.valueOf(httpMethod))
                     .requestAt(requestAt)

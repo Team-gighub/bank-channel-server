@@ -19,7 +19,7 @@ public interface UsageRepository extends JpaRepository<ApiCallLog, Long> {
      * 특정 merchant_id 기간을 기준으로 API 호출 로그를 집계하여 상태 그룹별 건수를 반환합니다.
      * * [최적화 포인트]
      * 1. CASE 문과 GROUP BY를 사용하여 DB 레벨에서 한 번의 쿼리로 모든 집계를 완료합니다. (가장 효율적)
-     * 2. merchant_id timestamp(혹은 created_at) 필드에 인덱스가 있어야 최적의 성능을 냅니다.
+     * 2. merchant_id request_at(혹은 created_at) 필드에 인덱스가 있어야 최적의 성능을 냅니다.
      * 3. 집계 결과는 UsageAggregationResult DTO/Projection으로 자동 매핑됩니다.
      */
     @Query(value = """
@@ -33,8 +33,8 @@ public interface UsageRepository extends JpaRepository<ApiCallLog, Long> {
             COUNT(log_id) AS count
         FROM api_call_logs
         WHERE merchant_id = :merchantId
-          AND timestamp >= :startDate
-          AND timestamp <= :endDate
+          AND request_at >= :startDate
+          AND request_at <= :endDate
         GROUP BY statusGroup
     """, nativeQuery = true)
     List<UsageAggregationResult> aggregateUsagesByMerchantIdAndPeriod(

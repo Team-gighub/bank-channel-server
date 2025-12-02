@@ -1,16 +1,16 @@
 package com.bank.channel.baas.dto.NonBank;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
 public class UsageRequest {
-    @NotNull
+    @NotBlank(message = "merchantId is required.")
     private final String merchantId;
-    @NotNull
+    @NotBlank(message = "startDate is required.")
     private final String startDate;
-    @NotNull
+    @NotBlank(message = "endDate is required.")
     private final String endDate;
 }
