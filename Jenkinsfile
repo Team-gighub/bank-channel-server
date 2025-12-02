@@ -54,13 +54,13 @@ pipeline {
 
                     // 1) docker-compose.yml & .env 전송
                     sh """
-                        scp -o ${COMPOSE_FILE} ${EC2_HOST}:~/bank-channel/${COMPOSE_FILE}
-                        scp -o ${ENV_FILE} ${EC2_HOST}:~/bank-channel/${ENV_FILE}
+                        scp -v ${COMPOSE_FILE} ${EC2_HOST}:~/bank-channel/${COMPOSE_FILE}
+                        scp -v ${ENV_FILE} ${EC2_HOST}:~/bank-channel/${ENV_FILE}
                     """
 
                     // 2) 원격에서 docker compose 재배포
                     sh """
-                    ssh -v -o ${EC2_HOST} '
+                    ssh -v ${EC2_HOST} '
                         mkdir -p ~/bank-channel && cd ~/bank-channel;
 
                         # 최신 이미지 pull
