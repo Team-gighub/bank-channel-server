@@ -14,7 +14,7 @@ public class ApiBillingPolicy {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "policy_id")
-    private String policyId;
+    private Long policyId;
 
     @Column(name = "merchant_id", nullable = false, length = 50)
     private String merchantId;
