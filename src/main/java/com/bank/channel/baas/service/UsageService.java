@@ -25,8 +25,8 @@ import java.util.stream.Collectors;
 public class UsageService {
 
     // 기본 정책
-    private final Long DEFAULT_SUCCESS_PRICE = 10L;
-    private final Long DEFAULT_FAIL_PRICE = 5L;
+    private static final BigDecimal DEFAULT_SUCCESS_PRICE =  BigDecimal.valueOf(10);
+    private static final BigDecimal DEFAULT_FAIL_PRICE =  BigDecimal.valueOf(10);
 
     private final UsageRepository usageRepository; // 집계 Repository 추가
     private final PolicyRepository policyRepository; // 정책 Repository 추가
@@ -83,16 +83,16 @@ public class UsageService {
      */
     private BigDecimal calculateCost(
             Long successCount,
-            Long clientFailureConut,
+            Long clientFailureCount,
             Long serverFailureCount,
             ApiBillingPolicy policy
     ) {
         // 1. 적용할 단위 비용 결정
-        Long successPrice;
-        Long clientErrorPrice;
-        Long serverErrorPrice;
+        BigDecimal successPrice;
+        BigDecimal clientErrorPrice;
+        BigDecimal serverErrorPrice;
 
-        if (policy != null && policy.getUnitSuccessPrice() != null && policy.getUnitClientErrorPrice() != null && policy.getUnitServcerErrorPrice() != null) {
+        if (policy != null ) {
             successPrice = policy.getUnitSuccessPrice();
             clientErrorPrice = policy.getUnitClientErrorPrice();
             serverErrorPrice = policy.getUnitServcerErrorPrice();
@@ -110,7 +110,7 @@ public class UsageService {
 
         // 실패 비용 = 실패 건수 * 단위 실패 가격
         BigDecimal costFailure =
-                new BigDecimal(clientFailureConut).multiply(new BigDecimal(clientErrorPrice))
+                new BigDecimal(clientFailureCount).multiply(new BigDecimal(clientErrorPrice))
                         .add(new BigDecimal(serverFailureCount).multiply(new BigDecimal(serverErrorPrice)));
 
         // 3. 총 비용 계산 및 소수점 처리

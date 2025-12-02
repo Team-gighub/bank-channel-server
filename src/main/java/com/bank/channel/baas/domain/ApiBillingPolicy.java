@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -23,13 +25,13 @@ public class ApiBillingPolicy {
     private String apiEndpoint;
 
     @Column(name = "unit_success_price", nullable = false)
-    private Long unitSuccessPrice;
+    private BigDecimal unitSuccessPrice;
 
     @Column(name = "unit_client_error_price", nullable = false)
-    private Long unitClientErrorPrice;
+    private BigDecimal unitClientErrorPrice;
 
     @Column(name = "unit_server_error_price", nullable = false)
-    private Long unitServcerErrorPrice;
+    private BigDecimal unitServcerErrorPrice;
 
     @Column(name = "effective_start_date")
     private LocalDateTime effectiveStartDate;

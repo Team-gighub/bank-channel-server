@@ -11,10 +11,10 @@ import org.springframework.stereotype.Repository;
  * ApiBillingPolicy 엔티티를 사용해 유효한 전역 요금 정책을 조회하는 쿼리 구현
  */
 @Repository
-public interface PolicyRepository extends JpaRepository<ApiBillingPolicy, String> {
+public interface PolicyRepository extends JpaRepository<ApiBillingPolicy, Long> {
 
     /**
-     * 특정 marchant_id에 대해 주어진 날짜(currentDate)에 유효하고
+     * 특정 merchant_id 대해 주어진 날짜(currentDate)에 유효하고
      * 전역적(api_endpoint IS NULL)으로 적용되는 정책을 조회합니다.
      * * [최적화 포인트]
      * 1. merchant_id 유효 기간(effective_start_date, effective_end_date)을 WHERE 절에 포함하여 인덱스를 효율적으로 사용합니다.
