@@ -47,7 +47,7 @@ public class PaymentService {
 
         try {
             // 2. 계정계 Feign Client 호출 (가공된 DTO 사용)
-            BankPaymentAuthorizeResponse response = accountSystemClient.authorizePayment(accountRequest);
+            BankPaymentAuthorizeResponse response = accountSystemClient.authorizePayment(accountRequest).getData();
             log.info("[PAYMENT_AUTHORIZE] Successfully received response from core system. ConfirmToken: {}, EscrowId: {}", response.getConfirmToken(), response.getEscrowId());
             return PaymentAuthorizeResponse.success(response);
         } catch (FeignException e) {
@@ -73,11 +73,15 @@ public class PaymentService {
 
         try {
             // 1. 계정계 Feign Client 호출
-            BankPaymentApprovalResponse response = accountSystemClient.approvePayment(request);
+            BankPaymentApprovalResponse response = accountSystemClient.approvePayment(request).getData();
             log.info("[PAYMENT_APPROVAL] Successfully received response from core system. EscrowId: {}", response.getEscrowId());
             // 2. 계정계 응답 DTO를 외부 응답 DTO로 변환하여 반환
             return PaymentApprovalResponse.builder()
                     .escrowId(response.getEscrowId())
+                    .holdAmount(response.getHoldAmount())
+                    .holdStartDatetime(response.getHoldStartDatetime())
+                    .holdStatus(response.getHoldStatus())
+                    .platformFee(response.getPlatformFee())
                     .build();
 
         } catch (FeignException e) {
@@ -101,7 +105,7 @@ public class PaymentService {
 
         try {
             // 1. 계정계 Feign Client 호출
-            BankPaymentConfirmResponse response = accountSystemClient.confirmPayment(request);
+            BankPaymentConfirmResponse response = accountSystemClient.confirmPayment(request).getData();
             log.info("[PAYMENT_CONFIRM] Successfully received response from core system. PaymentId: {}", response.getPaymentId());
             // 2. 계정계 응답 DTO를 외부 응답 DTO로 변환하여 반환
             return PaymentConfirmResponse.builder()
