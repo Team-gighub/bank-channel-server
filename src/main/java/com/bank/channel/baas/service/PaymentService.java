@@ -176,7 +176,8 @@ public class PaymentService {
 
             // ObjectMapper를 사용해 JSON 파싱
             JsonNode root = objectMapper.readTree(content);
-            String accountErrorCode = root.path("code").asText();
+            JsonNode errorNode = root.path("error");
+            String accountErrorCode = errorNode.path("code").asText();
 
             log.info("[Feign Mapping] Received core error code: {}", accountErrorCode);
 
