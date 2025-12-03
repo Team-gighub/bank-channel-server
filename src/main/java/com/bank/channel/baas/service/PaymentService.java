@@ -184,13 +184,8 @@ public class PaymentService {
             log.info("[Feign Mapping] Received core error code: {}", accountErrorCode);
 
             // 2. 계정계 비즈니스 오류 코드 매핑
-            Map<String, ErrorCode> errorCodeMap = Map.of(
-                    "BAL_3001", ErrorCode.BALANCE_INSUFFICIENT,
-                    "VAL_3001", ErrorCode.TOKEN_EXPIRED_OR_INVALID,
-                    "ACCT_4001", ErrorCode.ACCOUNT_NOT_FOUND
-            );
 
-            ErrorCode mappedErrorCode = errorCodeMap.get(accountErrorCode);
+            ErrorCode mappedErrorCode = ErrorCode.fromCode(accountErrorCode);
 
             if (mappedErrorCode != null) {
                 log.warn("[Feign Mapping] Mapped core error {} to {}.", accountErrorCode, mappedErrorCode.name(),e);
