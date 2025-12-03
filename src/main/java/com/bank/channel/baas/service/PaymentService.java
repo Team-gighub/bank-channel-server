@@ -82,6 +82,8 @@ public class PaymentService {
                     .holdStartDatetime(response.getHoldStartDatetime())
                     .holdStatus(response.getHoldStatus())
                     .platformFee(response.getPlatformFee())
+                    .payerBankCode(response.getPayerBankCode())
+                    .payerAccount(response.getPayerAccount())
                     .build();
 
         } catch (FeignException e) {

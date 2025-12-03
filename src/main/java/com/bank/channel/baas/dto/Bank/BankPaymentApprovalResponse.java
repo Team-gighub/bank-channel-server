@@ -19,4 +19,6 @@ public class BankPaymentApprovalResponse {
     private final HoldStatus holdStatus;
     private final BigDecimal platformFee;
     private final LocalDateTime holdStartDatetime;
+    private final String payerBankCode;
+    private final String payerAccount;
 }
