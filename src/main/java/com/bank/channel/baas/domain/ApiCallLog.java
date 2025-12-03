@@ -18,7 +18,7 @@ public class ApiCallLog {
     @Builder
     private ApiCallLog(
             String traceId,
-            String marchantId,
+            String merchantId,
             String apiEndpoint,
             HttpMethod httpMethod,
             LocalDateTime requestAt,
@@ -27,7 +27,7 @@ public class ApiCallLog {
             Integer statusCode
     ) {
         this.traceId = traceId;
-        this.marchantId = marchantId;
+        this.merchantId = merchantId;
         this.apiEndpoint = apiEndpoint;
         this.httpMethod = httpMethod;
         this.requestAt = requestAt;
@@ -44,8 +44,8 @@ public class ApiCallLog {
     @Column(name = "trace_id", nullable = false, length = 50)
     private String traceId;
 
-    @Column(name = "marchant_id", nullable = false, length = 50)
-    private String marchantId;
+    @Column(name = "merchant_id", nullable = false, length = 50)
+    private String merchantId;
 
     @Column(name = "api_endpoint", nullable = false, length = 200)
     private String apiEndpoint;
