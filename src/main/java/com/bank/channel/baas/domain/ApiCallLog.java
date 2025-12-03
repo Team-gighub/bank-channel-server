@@ -3,6 +3,7 @@ package com.bank.channel.baas.domain;
 import com.bank.channel.baas.domain.enums.HttpMethod;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,6 +15,27 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ApiCallLog {
 
+    @Builder
+    private ApiCallLog(
+            String traceId,
+            String merchantId,
+            String apiEndpoint,
+            HttpMethod httpMethod,
+            LocalDateTime requestAt,
+            LocalDateTime responseAt,
+            Integer latencyMs,
+            Integer statusCode
+    ) {
+        this.traceId = traceId;
+        this.merchantId = merchantId;
+        this.apiEndpoint = apiEndpoint;
+        this.httpMethod = httpMethod;
+        this.requestAt = requestAt;
+        this.responseAt = responseAt;
+        this.latencyMs = latencyMs;
+        this.statusCode = statusCode;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "log_id")
@@ -22,8 +44,8 @@ public class ApiCallLog {
     @Column(name = "trace_id", nullable = false, length = 50)
     private String traceId;
 
-    @Column(name = "marchant_id", nullable = false, length = 50)
-    private String marchantId;
+    @Column(name = "merchant_id", nullable = false, length = 50)
+    private String merchantId;
 
     @Column(name = "api_endpoint", nullable = false, length = 200)
     private String apiEndpoint;
