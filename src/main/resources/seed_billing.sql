@@ -105,3 +105,71 @@ INSERT INTO api_billing_policies (
     @CURRENT_TIME, 
     @CURRENT_TIME
 );
+
+INSERT INTO api_billing_policies (
+    merchant_id, api_endpoint, unit_success_price, 
+    unit_client_error_price, unit_server_error_price, 
+    effective_start_date, effective_end_date, created_at, updated_at
+) VALUES 
+(
+    'WK', 
+    '/api/v1/payment/authorize', 
+    10,        -- 성공 10원
+    10,         -- 클라이언트 오류 10원
+    5,         -- 서버 오류 5원
+    @START_OF_TEST_PERIOD, 
+    NULL,      -- 종료일 없음 (활성)
+    @CURRENT_TIME, 
+    @CURRENT_TIME
+);
+
+INSERT INTO api_billing_policies (
+    merchant_id, api_endpoint, unit_success_price, 
+    unit_client_error_price, unit_server_error_price, 
+    effective_start_date, effective_end_date, created_at, updated_at
+) VALUES 
+(
+    'WK', 
+    '/api/v1/payment/confirm', 
+    10,        -- 성공 10원
+    10,         -- 클라이언트 오류 10원
+    5,         -- 서버 오류 5원
+    @START_OF_TEST_PERIOD, 
+    NULL,      -- 종료일 없음 (활성)
+    @CURRENT_TIME, 
+    @CURRENT_TIME
+);
+
+INSERT INTO api_billing_policies (
+    merchant_id, api_endpoint, unit_success_price, 
+    unit_client_error_price, unit_server_error_price, 
+    effective_start_date, effective_end_date, created_at, updated_at
+) VALUES 
+(
+    'WK', 
+    '/api/v1/payment/approval', 
+    10,        -- 성공 10원
+    10,         -- 클라이언트 오류 10원
+    5,         -- 서버 오류 5원
+    @START_OF_TEST_PERIOD, 
+    NULL,      -- 종료일 없음 (활성)
+    @CURRENT_TIME, 
+    @CURRENT_TIME
+);
+
+INSERT INTO api_billing_policies (
+    merchant_id, api_endpoint, unit_success_price, 
+    unit_client_error_price, unit_server_error_price, 
+    effective_start_date, effective_end_date, created_at, updated_at
+) VALUES 
+(
+    'WK', 
+    '/api/v1/contracts/register', 
+    10,        -- 성공 10원
+    10,         -- 클라이언트 오류 10원
+    5,         -- 서버 오류 5원
+    @START_OF_TEST_PERIOD, 
+    NULL,      -- 종료일 없음 (활성)
+    @CURRENT_TIME, 
+    @CURRENT_TIME
+);

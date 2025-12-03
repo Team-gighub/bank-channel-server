@@ -1,7 +1,6 @@
 package com.bank.channel.baas.service;
 
 import com.bank.channel.baas.domain.ApiBillingPolicy;
-import com.bank.channel.baas.dto.NonBank.UsageRequest;
 import com.bank.channel.baas.dto.NonBank.UsageResponse;
 import com.bank.channel.baas.repository.PolicyRepository;
 import com.bank.channel.baas.repository.UsageAggregationResult;
@@ -31,13 +30,13 @@ public class UsageService {
     private final UsageRepository usageRepository; // 집계 Repository 추가
     private final PolicyRepository policyRepository; // 정책 Repository 추가
 
-    public UsageResponse getUsages(UsageRequest request) {
+    public UsageResponse getUsages(String merchantId, String startDate, String endDate) {
         // Service 시작 전, 날짜 유효성 검증 수행
-        validateUsageRequest(request);
+        validateUsageRequest(startDate,endDate);
 
         // 1. startDate ~ endDate 집계 결과 results
         List<UsageAggregationResult> results = usageRepository.aggregateUsagesByMerchantIdAndPeriod(
-                request.getMerchantId(), request.getStartDate(), request.getEndDate()
+                merchantId, startDate, endDate
         );
 
         // 2. Group별 count를 매핑한 결과 countMap
@@ -57,7 +56,7 @@ public class UsageService {
         // 4. 유효한 비용 정책 조회
         // 현재 날짜 기준 비용 정책 불러오기
         ApiBillingPolicy policy = policyRepository.findActiveGlobalPolicyByMerchantIdAndDate(
-                request.getMerchantId(), LocalDate.now().toString()
+                merchantId, LocalDate.now()
         );
 
         // 5. 동적 비용 산정 로직 호출
@@ -118,12 +117,12 @@ public class UsageService {
                 .setScale(4, RoundingMode.HALF_UP); // 소수점 4자리까지 처리 예시
     }
 
-    private void validateUsageRequest(UsageRequest request) {
+    private void validateUsageRequest(String startDate, String endDate) {
         try {
-            LocalDate startDate = LocalDate.parse(request.getStartDate());
-            LocalDate endDate = LocalDate.parse(request.getEndDate());
+            LocalDate start_date = LocalDate.parse(startDate);
+            LocalDate end_date = LocalDate.parse(endDate);
 
-            if (startDate.isAfter(endDate)) {
+            if (start_date.isAfter(end_date)) {
                 throw new CustomException(ErrorCode.INVALID_DATE_RANGE);
             }
         } catch (DateTimeParseException e) {

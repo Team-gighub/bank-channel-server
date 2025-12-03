@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+
 /**
  * PolicyRepository
  * ApiBillingPolicy 엔티티를 사용해 유효한 전역 요금 정책을 조회하는 쿼리 구현
@@ -33,6 +35,6 @@ public interface PolicyRepository extends JpaRepository<ApiBillingPolicy, Long> 
     """, nativeQuery = true)
     ApiBillingPolicy findActiveGlobalPolicyByMerchantIdAndDate(
             @Param("merchantId") String merchantId,
-            @Param("currentDate") String currentDate
+            @Param("currentDate") LocalDate currentDate
     );
 }
