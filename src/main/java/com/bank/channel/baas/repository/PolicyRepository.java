@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * PolicyRepository
@@ -28,13 +29,12 @@ public interface PolicyRepository extends JpaRepository<ApiBillingPolicy, Long> 
         FROM api_billing_policies
         WHERE merchant_id = :merchantId 
           AND (effective_start_date IS NULL OR effective_start_date <= :currentDate)
-          AND (effective_end_date IS NULL OR effective_end_date >= :currentDate)
-          AND api_endpoint IS NULL  -- 전역 정책(Global Policy) 가정
+          AND (effective_end_date IS NULL OR effective_end_date > :currentDate)
         ORDER BY created_at DESC
         LIMIT 1
     """, nativeQuery = true)
     ApiBillingPolicy findActiveGlobalPolicyByMerchantIdAndDate(
             @Param("merchantId") String merchantId,
-            @Param("currentDate") LocalDate currentDate
+            @Param("currentDate") LocalDateTime currentDate
     );
 }

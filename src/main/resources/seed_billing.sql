@@ -1,7 +1,3 @@
-use bank_channel;
--- MerchantStatus: ACTIVE, INACTIVE
--- MerchantType: PLATFORM, GENERAL
-
 INSERT INTO merchants (
     merchant_id, 
     merchant_name, 
@@ -22,6 +18,10 @@ INSERT INTO merchants (
     NOW(),
     NOW()
 );
+
+select * from merchants;
+
+-- 호출 데이터 삽입 --
 
 -- 1. 성공 데이터 (2XX): 100건
 INSERT INTO api_call_logs (
@@ -81,11 +81,14 @@ FROM (
     FROM information_schema.tables LIMIT 20
 ) n;
 
+select * from api_call_logs;
+
 -- 현재 시간 설정 (created_at, updated_at에 사용)
-SET @CURRENT_TIME = NOW();
+SET @CURRENT_TIME = '2025-01-01 00:00:00';
 -- 테스트 기준 시간 설정 (2025년 11월)
 SET @START_OF_TEST_PERIOD = '2025-01-01 00:00:00';
 SET @END_OF_LAST_MONTH = '2025-10-31 23:59:59';
+
 
 -- 1. WOKET_KR 고객사를 위한 활성 전역 정책
 --    (가장 최근에 생성된 유효 정책이므로 PolicyRepository에 의해 조회됨)
@@ -173,3 +176,5 @@ INSERT INTO api_billing_policies (
     @CURRENT_TIME, 
     @CURRENT_TIME
 );
+
+select * from api_billing_policies;

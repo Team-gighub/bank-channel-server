@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
@@ -56,8 +58,9 @@ public class UsageService {
         // 4. 유효한 비용 정책 조회
         // 현재 날짜 기준 비용 정책 불러오기
         ApiBillingPolicy policy = policyRepository.findActiveGlobalPolicyByMerchantIdAndDate(
-                merchantId, LocalDate.now()
+                merchantId, LocalDateTime.now()
         );
+        log.info("[policy] "+policy.getPolicyId());
 
         // 5. 동적 비용 산정 로직 호출
         BigDecimal estimatedTotalCost = calculateCost(
@@ -118,9 +121,14 @@ public class UsageService {
     }
 
     private void validateUsageRequest(String startDate, String endDate) {
+
+        // yyyy-MM-dd HH:mm:ss.SSSSSS (공백, 소수점 이하 6자리 포함)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
         try {
-            LocalDate start_date = LocalDate.parse(startDate);
-            LocalDate end_date = LocalDate.parse(endDate);
+            // atStartOfDay()를 사용하여 해당 날짜의 자정 시간(00:00:00)을 붙여 LocalDateTime을 만듭니다.
+            LocalDateTime start_date = LocalDate.parse(startDate, formatter).atStartOfDay();
+            LocalDateTime end_date = LocalDate.parse(endDate, formatter).atStartOfDay();
 
             if (start_date.isAfter(end_date)) {
                 throw new CustomException(ErrorCode.INVALID_DATE_RANGE);
