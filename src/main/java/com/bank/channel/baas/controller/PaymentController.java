@@ -47,7 +47,7 @@ public class PaymentController {
                     .queryParam("code", errorCode.getCode())
                     .toUriString();
 
-            log.error("[Payment Authorize Failed] Redirect URL: {}", redirectUrl);
+            log.error("[Payment Authorize Failed] Redirect URL: {}, ErrorCode: {}", redirectUrl, errorCode.getCode());
         }
 
         // 2. JSON body로 redirect URL 반환
