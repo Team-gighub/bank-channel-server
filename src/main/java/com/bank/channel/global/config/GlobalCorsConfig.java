@@ -15,7 +15,7 @@ public class GlobalCorsConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")             // 모든 경로에 적용
                 .allowedOrigins(origins.split(",")) // 허용할 프론트 도메인
-                .allowedMethods("*")         // GET, POST, PUT, DELETE 등 모두 허용
+                .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")         // GET, POST, PUT, DELETE 등 모두 허용
                 .allowedHeaders("*")         // 모든 헤더 허용
                 .allowCredentials(true)      // 쿠키 허용
                 .maxAge(3600);               // preflight 요청 캐시 시간 (초)
