@@ -29,3 +29,6 @@ external:
   api:
     account-system:
       url: ${ACCOUNT_SERVER_URL}
+
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}

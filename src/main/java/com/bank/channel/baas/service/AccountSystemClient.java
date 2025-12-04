@@ -3,6 +3,7 @@ package com.bank.channel.baas.service;
 import com.bank.channel.baas.dto.Bank.*;
 import com.bank.channel.baas.dto.NonBank.PaymentApprovalRequest;
 import com.bank.channel.baas.dto.NonBank.PaymentConfirmRequest;
+import com.bank.channel.global.response.ApiResponse;
 import lombok.Value;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,7 +23,7 @@ public interface AccountSystemClient {
      * @param request 계정계 전용 요청 DTO
      */
     @PostMapping("/payment/authorize")
-    BankPaymentAuthorizeResponse authorizePayment(
+    ApiResponse<BankPaymentAuthorizeResponse> authorizePayment(
             @RequestBody BankPaymentAuthorizeRequest request
     );
 
@@ -34,7 +35,7 @@ public interface AccountSystemClient {
      * @return 결제 승인 응답 DTO (escrowId)
      */
     @PostMapping("/payment/approval")
-    BankPaymentApprovalResponse approvePayment(
+    ApiResponse<BankPaymentApprovalResponse> approvePayment(
             @RequestBody PaymentApprovalRequest request
     );
 
@@ -46,7 +47,7 @@ public interface AccountSystemClient {
      * @return 지급 확정 응답 DTO (paymentId)
      */
     @PostMapping("/payment/confirm")
-    BankPaymentConfirmResponse confirmPayment(
+    ApiResponse<BankPaymentConfirmResponse> confirmPayment(
             @RequestBody PaymentConfirmRequest request
     );
 }
