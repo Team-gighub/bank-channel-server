@@ -63,13 +63,12 @@ public enum ErrorCode {
     private final String code;
     private final String message;
 
+    private static final java.util.Map<String, ErrorCode> CODE_MAP =
+            java.util.Collections.unmodifiableMap(java.util.stream.Stream.of(values())
+                    .collect(java.util.stream.Collectors.toMap(ErrorCode::getCode, e -> e)));
+
     public static ErrorCode fromCode(String code) {
-        for (ErrorCode error : ErrorCode.values()) {
-            if (error.code.equals(code)) {
-                return error;
-            }
-        }
-        return null; // 없으면 null → fallback 처리
+        return CODE_MAP.get(code); // 없으면 null → fallback 처리
     }
 
 }
