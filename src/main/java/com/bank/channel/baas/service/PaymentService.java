@@ -47,7 +47,7 @@ public class PaymentService {
 
         try {
             // 2. 계정계 Feign Client 호출 (가공된 DTO 사용)
-            BankPaymentAuthorizeResponse response = accountSystemClient.authorizePayment(accountRequest);
+            BankPaymentAuthorizeResponse response = accountSystemClient.authorizePayment(accountRequest).getData();
             log.info("[PAYMENT_AUTHORIZE] Successfully received response from core system. ConfirmToken: {}, EscrowId: {}", response.getConfirmToken(), response.getEscrowId());
             return PaymentAuthorizeResponse.success(response);
         } catch (FeignException e) {
@@ -73,11 +73,17 @@ public class PaymentService {
 
         try {
             // 1. 계정계 Feign Client 호출
-            BankPaymentApprovalResponse response = accountSystemClient.approvePayment(request);
+            BankPaymentApprovalResponse response = accountSystemClient.approvePayment(request).getData();
             log.info("[PAYMENT_APPROVAL] Successfully received response from core system. EscrowId: {}", response.getEscrowId());
             // 2. 계정계 응답 DTO를 외부 응답 DTO로 변환하여 반환
             return PaymentApprovalResponse.builder()
                     .escrowId(response.getEscrowId())
+                    .holdAmount(response.getHoldAmount())
+                    .holdStartDatetime(response.getHoldStartDatetime())
+                    .holdStatus(response.getHoldStatus())
+                    .platformFee(response.getPlatformFee())
+                    .payerBankCode(response.getPayerBankCode())
+                    .payerAccount(response.getPayerAccount())
                     .build();
 
         } catch (FeignException e) {
@@ -101,7 +107,7 @@ public class PaymentService {
 
         try {
             // 1. 계정계 Feign Client 호출
-            BankPaymentConfirmResponse response = accountSystemClient.confirmPayment(request);
+            BankPaymentConfirmResponse response = accountSystemClient.confirmPayment(request).getData();
             log.info("[PAYMENT_CONFIRM] Successfully received response from core system. PaymentId: {}", response.getPaymentId());
             // 2. 계정계 응답 DTO를 외부 응답 DTO로 변환하여 반환
             return PaymentConfirmResponse.builder()
@@ -172,18 +178,14 @@ public class PaymentService {
 
             // ObjectMapper를 사용해 JSON 파싱
             JsonNode root = objectMapper.readTree(content);
-            String accountErrorCode = root.path("code").asText();
+            JsonNode errorNode = root.path("error");
+            String accountErrorCode = errorNode.path("code").asText();
 
             log.info("[Feign Mapping] Received core error code: {}", accountErrorCode);
 
             // 2. 계정계 비즈니스 오류 코드 매핑
-            Map<String, ErrorCode> errorCodeMap = Map.of(
-                    "BAL_3001", ErrorCode.BALANCE_INSUFFICIENT,
-                    "VAL_3001", ErrorCode.TOKEN_EXPIRED_OR_INVALID,
-                    "ACCT_4001", ErrorCode.ACCOUNT_NOT_FOUND
-            );
 
-            ErrorCode mappedErrorCode = errorCodeMap.get(accountErrorCode);
+            ErrorCode mappedErrorCode = ErrorCode.fromCode(accountErrorCode);
 
             if (mappedErrorCode != null) {
                 log.warn("[Feign Mapping] Mapped core error {} to {}.", accountErrorCode, mappedErrorCode.name(),e);
