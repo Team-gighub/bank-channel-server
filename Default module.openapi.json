@@ -245,7 +245,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "marchantId": {
+                  "merchantId": {
                     "type": "string",
                     "description": "고객사 아이디"
                   },
@@ -263,7 +263,7 @@
                   }
                 },
                 "required": [
-                  "marchantId",
+                  "merchantId",
                   "reqYmd",
                   "escrowId",
                   "changerId"
@@ -475,12 +475,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "marchant_id": {
+                  "merchant_id": {
                     "type": "string"
                   }
                 },
                 "required": [
-                  "marchant_id"
+                  "merchant_id"
                 ]
               },
               "examples": {}

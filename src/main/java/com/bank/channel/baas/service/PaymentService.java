@@ -99,7 +99,7 @@ public class PaymentService {
 
     /**
      * 지급 확정 로직: 외부 요청을 받아 DTO를 계정계로 전달
-     * 요청: marchantId, reqYmd, escrowId, changerId
+     * 요청: merchantId, reqYmd, escrowId, changerId
      * 응답: paymentId
      */
     public PaymentConfirmResponse confirmPayment(PaymentConfirmRequest request) {
