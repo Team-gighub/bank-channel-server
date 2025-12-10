@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  channel-db:
+    container_name: channel-db
+    image: mysql:8.0.36
+    platform: linux/amd64
+    command: >
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --skip-name-resolve
+    restart: always
+
+    ports:
+      - "3307:3306"
+
+    environment:
+      MYSQL_ROOT_PASSWORD: "1234"
+      MYSQL_DATABASE: "bank_channel"
+
+    volumes:
+      - channel-db-data:/var/lib/mysql
+
+    healthcheck:
+      test: [ "CMD-SHELL", "mysqladmin ping -uroot -p1234 | grep 'mysqld is alive'" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  channel-db-data:

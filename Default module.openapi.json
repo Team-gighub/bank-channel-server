@@ -1,0 +1,515 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Default module",
+    "description": "",
+    "version": "1.0.0"
+  },
+  "tags": [],
+  "paths": {
+    "/payment/authorize": {
+      "post": {
+        "summary": "결제 인증",
+        "deprecated": false,
+        "description": "워켓에서 프리랜서/고객 정보를 채널계로 넘겨주면, 채널계는 해당 프리랜서/고객이 생성한 거래에 대해 판단하고 그 결과를 응답으로 반환함.\n\n응답에 따라 successUrl or failUrl 으로 이동 + 쿼리 파라미터 붙여서 confirmToken,escrowId\nex) ?confirmToken={confirmToken}&escrowId={escrowId0}",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "API key",
+            "required": false,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "merchantId": {
+                    "type": "string",
+                    "description": "고객사 아이디"
+                  },
+                  "userId": {
+                    "type": "string",
+                    "description": "고객사 회원 ID ( 의뢰인 PK )"
+                  },
+                  "userName": {
+                    "type": "string",
+                    "description": "고객사 회원명"
+                  },
+                  "productName": {
+                    "type": "string",
+                    "description": "상품명 ( 워켓의 경우 계약명 )"
+                  },
+                  "amount": {
+                    "type": "number",
+                    "description": "결제 금액"
+                  },
+                  "orderNo": {
+                    "type": "string",
+                    "description": "고객사 주문번호 ( 워켓의 경우 거래 PK )"
+                  },
+                  "payerInfo": {
+                    "type": "object",
+                    "properties": {
+                      "accountNo": {
+                        "type": "string",
+                        "description": "출금계좌번호"
+                      },
+                      "bankCode": {
+                        "type": "string",
+                        "description": "출금계좌 은행코드"
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "구매자명"
+                      },
+                      "phone": {
+                        "type": "string",
+                        "description": "구매자 휴대폰 번호"
+                      }
+                    },
+                    "description": "구매자 ( 워켓의 경우 의뢰인 )",
+                    "required": [
+                      "accountNo",
+                      "bankCode",
+                      "name",
+                      "phone"
+                    ]
+                  },
+                  "payeeInfo": {
+                    "type": "object",
+                    "properties": {
+                      "accountNo": {
+                        "type": "string",
+                        "description": "입금계좌번호"
+                      },
+                      "bankCode": {
+                        "type": "string",
+                        "description": "입금계좌 은행코드"
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "판매자명"
+                      },
+                      "phone": {
+                        "type": "string",
+                        "description": "구매자 휴대폰 번"
+                      }
+                    },
+                    "description": "판매자 ( 워켓의 경우 프리랜서 )",
+                    "required": [
+                      "accountNo",
+                      "bankCode",
+                      "name",
+                      "phone"
+                    ]
+                  },
+                  "successUrl": {
+                    "type": "string"
+                  },
+                  "failUrl": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "merchantId",
+                  "userId",
+                  "userName",
+                  "orderNo",
+                  "amount",
+                  "productName",
+                  "payerInfo",
+                  "payeeInfo",
+                  "successUrl",
+                  "failUrl"
+                ]
+              },
+              "examples": {}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/payment/approval": {
+      "post": {
+        "summary": "결제 승인",
+        "deprecated": false,
+        "description": "워켓에서 거래를 진행하고 싶은 사람의 성공 토큰을 가지고 채널계로 요청을 전송하면, 채널계는 성공 토큰에 맞는 계좌/거래를 진행하고  결과를 반환함.",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "API key",
+            "required": false,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "escrowId": {
+                    "type": "string",
+                    "description": "에스크로 계좌 PK"
+                  },
+                  "confirmToken": {
+                    "type": "string",
+                    "description": "결제 승인 토큰"
+                  }
+                },
+                "required": [
+                  "confirmToken",
+                  "escrowId"
+                ]
+              },
+              "examples": {}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "escrowId": {
+                      "type": "string",
+                      "description": "에스크로 계좌 PK"
+                    }
+                  },
+                  "required": [
+                    "escrowId"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/payment/confirm": {
+      "post": {
+        "summary": "지급 확정",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "API key",
+            "required": false,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "merchantId": {
+                    "type": "string",
+                    "description": "고객사 아이디"
+                  },
+                  "reqYmd": {
+                    "type": "string",
+                    "description": "요청일자 ( YYYY-MM-DD )"
+                  },
+                  "escrowId": {
+                    "type": "string",
+                    "description": "에스크로 계좌 PK"
+                  },
+                  "changerId": {
+                    "type": "string",
+                    "description": "처리자 아이디 ( 의뢰인이면 워켓 의뢰인 PK, 자동정산이면 워켓 ID )"
+                  }
+                },
+                "required": [
+                  "merchantId",
+                  "reqYmd",
+                  "escrowId",
+                  "changerId"
+                ]
+              },
+              "examples": {}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "paymentId": {
+                      "type": "string",
+                      "description": "지급확정 원장 PK ( 에스크로 계좌 해지에 발생한  )"
+                    }
+                  },
+                  "required": [
+                    "paymentId"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/contracts/register": {
+      "post": {
+        "summary": "계약 데이터 등록",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "API key",
+            "required": false,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "paymentId": {
+                    "type": "string",
+                    "description": "지급확정 TID"
+                  },
+                  "orderNo": {
+                    "type": "string",
+                    "description": "거래 PK"
+                  },
+                  "userId": {
+                    "type": "string",
+                    "description": "워켓 유저 PK"
+                  },
+                  "businessSector": {
+                    "type": "string",
+                    "description": "업종"
+                  },
+                  "businessSectorYears": {
+                    "type": "string",
+                    "description": "업력"
+                  },
+                  "annualIncomeTotal": {
+                    "type": "string",
+                    "description": "연간누적소득액"
+                  },
+                  "contractUrl": {
+                    "type": "string",
+                    "description": "계약서 원본 S3 URL"
+                  },
+                  "hash": {
+                    "type": "string",
+                    "description": "계약서 원본 + 메타데이터 hash값"
+                  },
+                  "metadata": {
+                    "type": "object",
+                    "properties": {
+                      "contractInfo": {
+                        "type": "object",
+                        "properties": {
+                          "title": {
+                            "type": "string"
+                          },
+                          "amount": {
+                            "type": "number"
+                          },
+                          "startDate": {
+                            "type": "string"
+                          },
+                          "endDate": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "title",
+                          "amount",
+                          "startDate",
+                          "endDate"
+                        ]
+                      },
+                      "clientInfo": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "phone": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "name",
+                          "phone"
+                        ]
+                      },
+                      "freelancerInfo": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "phone": {
+                            "type": "string"
+                          },
+                          "account": {
+                            "type": "string"
+                          },
+                          "bank": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "name",
+                          "phone",
+                          "account",
+                          "bank"
+                        ]
+                      }
+                    },
+                    "description": "계약서 메타 데이터 ( S3에 올리는 메타데이터와 동일 구조 )",
+                    "required": [
+                      "contractInfo",
+                      "clientInfo",
+                      "freelancerInfo"
+                    ]
+                  }
+                },
+                "required": [
+                  "paymentId",
+                  "businessSector",
+                  "businessSectorYears",
+                  "annualIncomeTotal",
+                  "contractUrl",
+                  "hash",
+                  "metadata",
+                  "orderNo",
+                  "userId"
+                ]
+              },
+              "examples": {}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/": {
+      "get": {
+        "summary": "사용량 조회",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "merchant_id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "merchant_id"
+                ]
+              },
+              "examples": {}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {},
+    "securitySchemes": {}
+  },
+  "servers": [],
+  "security": []
+}
